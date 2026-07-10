@@ -167,14 +167,35 @@ if (featherCard) {
   });
 }
 
-/* --- Copy contract address (placeholder) --- */
+/* --- Copy CA buttons --- */
+function setupCopyBtn(btnId, textId, iconId, value) {
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    navigator.clipboard.writeText(value).then(() => {
+      if (textId) document.getElementById(textId).textContent = 'Copied!';
+      btn.style.color = 'var(--green)';
+      setTimeout(() => {
+        if (textId) document.getElementById(textId).textContent = 'Copy';
+      }, 2000);
+    });
+  });
+}
+
+const CA = 'FWrMkspGpx5WgCoymgohtCU889dFsyXeEXZojqFCpump';
+setupCopyBtn('caCopy', 'caCopyText', 'caIcon', CA);
+
+/* --- data-copy generic (tokenomics CA) --- */
 document.querySelectorAll('[data-copy]').forEach(btn => {
   btn.addEventListener('click', () => {
     const text = btn.dataset.copy;
     navigator.clipboard.writeText(text).then(() => {
-      const orig = btn.textContent;
+      const orig = btn.textContent.trim();
       btn.textContent = 'Copied!';
-      setTimeout(() => { btn.textContent = orig; }, 2000);
+      btn.style.color = 'var(--green)';
+      setTimeout(() => {
+        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:15px;height:15px"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy CA`;
+      }, 2000);
     });
   });
 });

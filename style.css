@@ -779,7 +779,117 @@ img { max-width: 100%; display: block; height: auto; }
   flex-wrap: wrap;
 }
 
-/* --- FAQ --- */
+/* --- CA Bar (Hero) --- */
+.ca-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-top: 24px;
+  max-width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.ca-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  background: var(--green-dim);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+.ca-address {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-muted);
+  word-break: break-all;
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+.ca-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--green-dim);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  color: var(--green);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: var(--transition);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.ca-copy:hover {
+  background: rgba(0,255,136,0.2);
+  border-color: var(--green);
+}
+.ca-copy svg { width: 15px; height: 15px; }
+
+/* --- Token CA Card (Tokenomics) --- */
+.token-card--ca {
+  grid-column: 1 / -1;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 20px 24px;
+}
+.token-ca-address {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-muted);
+  word-break: break-all;
+  flex: 1;
+  min-width: 0;
+}
+.token-ca-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--green-dim);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  color: var(--green);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.token-ca-copy:hover {
+  background: rgba(0,255,136,0.2);
+  border-color: var(--green);
+}
+.token-ca-copy svg { width: 15px; height: 15px; }
+
+/* --- FAQ link --- */
+.faq-link {
+  color: var(--green);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.faq-link:hover { opacity: 0.8; }
+
+/* --- Hero stat ticker smaller font --- */
+.stat-num { font-size: clamp(14px, 2vw, 22px); }
+
+
 .faq { background: var(--bg2); }
 .faq-list {
   max-width: 740px;
