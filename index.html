@@ -15,6 +15,86 @@
 </head>
 <body>
 
+  <!-- SVG SPRITE — all icons defined once, used anywhere -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <!-- rocket -->
+    <symbol id="icon-rocket" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4.5 16.5c-1.5 1.5-1.5 4 0 5.5s4 1.5 5.5 0l9-9c1.5-1.5 1.5-4 0-5.5s-4-1.5-5.5 0l-9 9z"/>
+      <path d="M14 6l4 4"/>
+      <path d="M3 21l3-3"/>
+    </symbol>
+    <!-- chat / community -->
+    <symbol id="icon-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    </symbol>
+    <!-- users -->
+    <symbol id="icon-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+      <circle cx="9" cy="7" r="4"/>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </symbol>
+    <!-- flag / fair launch -->
+    <symbol id="icon-flag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="4" y1="15" x2="4" y2="22"/><path d="M4 4h16l-4 5 4 5H4"/>
+    </symbol>
+    <!-- percent / 0% tax -->
+    <symbol id="icon-percent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="19" y1="5" x2="5" y2="19"/>
+      <circle cx="6.5" cy="6.5" r="2.5"/>
+      <circle cx="17.5" cy="17.5" r="2.5"/>
+    </symbol>
+    <!-- bolt / solana -->
+    <symbol id="icon-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+    </symbol>
+    <!-- block / no vc -->
+    <symbol id="icon-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+    </symbol>
+    <!-- infinity -->
+    <symbol id="icon-infinity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 12c-2-2.5-4-4-6-4a4 4 0 0 0 0 8c2 0 4-1.5 6-4z"/>
+      <path d="M12 12c2 2.5 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.5-6 4z"/>
+    </symbol>
+    <!-- X / twitter -->
+    <symbol id="icon-x" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L2.07 2.25H8.08l4.253 5.622 5.911-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117Z"/>
+    </symbol>
+    <!-- telegram -->
+    <symbol id="icon-telegram" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+    </symbol>
+    <!-- arrow right -->
+    <symbol id="icon-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12"/>
+      <polyline points="12 5 19 12 12 19"/>
+    </symbol>
+    <!-- check / live -->
+    <symbol id="icon-dot-live" viewBox="0 0 24 24" fill="currentColor">
+      <circle cx="12" cy="12" r="5"/>
+    </symbol>
+    <!-- feather -->
+    <symbol id="icon-feather" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/>
+      <line x1="16" y1="8" x2="2" y2="22"/>
+      <line x1="17.5" y1="15" x2="9" y2="15"/>
+    </symbol>
+    <!-- pill / capsule -->
+    <symbol id="icon-pill" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10.5 20H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v7"/>
+      <circle cx="17" cy="17" r="5"/>
+      <path d="M15 17h4"/>
+    </symbol>
+    <!-- globe / solana chain -->
+    <symbol id="icon-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="2" y1="12" x2="22" y2="12"/>
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+    </symbol>
+  </svg>
+
   <!-- NAV -->
   <nav class="navbar" id="navbar">
     <div class="nav-inner">
@@ -47,7 +127,10 @@
         <img src="logo.jpeg" alt="RobinPump" class="hero-logo-img" />
         <div class="hero-logo-ring"></div>
       </div>
-      <div class="hero-badge">🟢 Now Live on Pump.fun</div>
+      <div class="hero-badge">
+        <svg class="badge-dot" aria-hidden="true"><use href="#icon-dot-live"/></svg>
+        Now Live on Pump.fun
+      </div>
       <h1 class="hero-headline">
         The Feather Took<br />
         <span class="gradient-text">The Green Pill.</span>
@@ -57,10 +140,12 @@
       </p>
       <div class="hero-ctas">
         <a href="#" class="btn btn-primary btn-lg">
-          <span>🚀</span> Buy on Pump.fun
+          <svg class="btn-icon" aria-hidden="true"><use href="#icon-rocket"/></svg>
+          Buy on Pump.fun
         </a>
         <a href="#" class="btn btn-outline btn-lg">
-          <span>💬</span> Join Community
+          <svg class="btn-icon" aria-hidden="true"><use href="#icon-chat"/></svg>
+          Join Community
         </a>
       </div>
       <div class="hero-stats" role="list">
@@ -85,7 +170,7 @@
         </div>
       </div>
     </div>
-    <div class="hero-scroll">
+    <div class="hero-scroll" aria-hidden="true">
       <span>scroll down</span>
       <div class="scroll-arrow"></div>
     </div>
@@ -103,14 +188,19 @@
           <p>This is for the people who live on Crypto Twitter, who refresh Pump.fun at 3am, and who know that the best coins are the ones built by the community, for the community. No VC gatekeeping. No complicated roadmap. Just vibes, memes, and the green feather leading the way.</p>
           <div class="about-ctas">
             <a href="#" class="btn btn-primary">Buy on Pump.fun</a>
-            <a href="#" class="btn btn-ghost">Read the Lore →</a>
+            <a href="#story" class="btn btn-ghost">
+              Read the Lore
+              <svg class="btn-icon" aria-hidden="true"><use href="#icon-arrow-right"/></svg>
+            </a>
           </div>
         </div>
         <div class="about-visual">
           <div class="feather-card">
             <div class="feather-glow"></div>
             <img src="logo.jpeg" alt="RobinPump" class="feather-logo-img" />
-            <div class="capsule-emoji">💊</div>
+            <div class="feather-card-icon">
+              <svg aria-hidden="true"><use href="#icon-pill"/></svg>
+            </div>
             <div class="feather-label">ROBINPUMP</div>
             <div class="feather-sub">Community Meme Coin · Solana</div>
           </div>
@@ -138,17 +228,27 @@
         </div>
         <div class="story-icons">
           <div class="story-icon-wrap">
-            <span class="story-icon">🪶</span>
+            <div class="story-icon">
+              <svg aria-hidden="true"><use href="#icon-feather"/></svg>
+            </div>
             <span class="story-icon-label">The Feather</span>
           </div>
-          <div class="story-arrow">→</div>
+          <div class="story-arrow" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
           <div class="story-icon-wrap">
-            <span class="story-icon">💊</span>
+            <div class="story-icon">
+              <svg aria-hidden="true"><use href="#icon-pill"/></svg>
+            </div>
             <span class="story-icon-label">Green Capsule</span>
           </div>
-          <div class="story-arrow">→</div>
+          <div class="story-arrow" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
           <div class="story-icon-wrap">
-            <span class="story-icon">🚀</span>
+            <div class="story-icon">
+              <svg aria-hidden="true"><use href="#icon-rocket"/></svg>
+            </div>
             <span class="story-icon-label">RobinPump</span>
           </div>
         </div>
@@ -163,32 +263,44 @@
       <h2 class="section-title">Six Reasons the<br /><span class="gradient-text">Feather Goes Hard</span></h2>
       <div class="features-grid">
         <div class="feature-card" data-delay="0">
-          <div class="feature-icon">🌿</div>
+          <div class="feature-icon">
+            <svg aria-hidden="true"><use href="#icon-users"/></svg>
+          </div>
           <h3>Community Driven</h3>
           <p>Every decision, every meme, every moon mission — powered entirely by the people holding the bag.</p>
         </div>
         <div class="feature-card" data-delay="100">
-          <div class="feature-icon">🚀</div>
+          <div class="feature-icon">
+            <svg aria-hidden="true"><use href="#icon-flag"/></svg>
+          </div>
           <h3>Fair Launch</h3>
           <p>No presale. No whitelist. No sneaky insider allocations. Everyone gets in at the same starting line.</p>
         </div>
         <div class="feature-card" data-delay="200">
-          <div class="feature-icon">0️⃣</div>
+          <div class="feature-icon">
+            <svg aria-hidden="true"><use href="#icon-percent"/></svg>
+          </div>
           <h3>0% Tax</h3>
           <p>Buy. Sell. Repeat. Zero tax means zero friction — your tokens are yours, full stop.</p>
         </div>
         <div class="feature-card" data-delay="300">
-          <div class="feature-icon">⚡</div>
+          <div class="feature-icon">
+            <svg aria-hidden="true"><use href="#icon-bolt"/></svg>
+          </div>
           <h3>Built on Solana</h3>
           <p>Fast transactions, low fees, and a chain that doesn't sleep. The feather chose wisely.</p>
         </div>
         <div class="feature-card" data-delay="400">
-          <div class="feature-icon">🚫</div>
+          <div class="feature-icon">
+            <svg aria-hidden="true"><use href="#icon-block"/></svg>
+          </div>
           <h3>No VC Allocation</h3>
           <p>Venture capitalists don't run this. The community does. The supply belongs to the holders.</p>
         </div>
         <div class="feature-card" data-delay="500">
-          <div class="feature-icon">♾️</div>
+          <div class="feature-icon">
+            <svg aria-hidden="true"><use href="#icon-infinity"/></svg>
+          </div>
           <h3>Infinite Meme Energy</h3>
           <p>The true utility of RobinPump is vibes. And the supply of vibes is unlimited.</p>
         </div>
@@ -226,7 +338,7 @@
       </div>
       <div class="tokenomics-note">
         <p>Tokenomics this clean aren't an accident — they're a statement. RobinPump was built to be simple because meme coins don't need complexity, they need conviction. No team wallets quietly dumping. No tax skimming your trades. Just a billion tokens, a fair launch, and a community that decides what happens next.</p>
-        <p class="tokenomics-tagline">The feather keeps it clean. 🪶</p>
+        <p class="tokenomics-tagline">The feather keeps it clean.</p>
       </div>
     </div>
   </section>
@@ -287,16 +399,19 @@
         <div class="community-glow"></div>
         <div class="section-label">// COMMUNITY</div>
         <h2 class="section-title">Join The<br /><span class="gradient-text">Green Movement</span></h2>
-        <p class="community-text">The feather doesn't fly alone. RobinPump is built on the shoulders of degens, meme lords, and true believers who know that community is the only roadmap that matters. Follow us on Twitter for the latest chaos, join the Telegram to be in the room where it happens, and help spread the gospel of the green feather to every corner of the internet. The memes won't post themselves — well, actually, they might. But we'd rather you help.</p>
+        <p class="community-text">The feather doesn't fly alone. RobinPump is built on the shoulders of degens, meme lords, and true believers who know that community is the only roadmap that matters. Follow us on Twitter for the latest chaos, join the Telegram to be in the room where it happens, and help spread the gospel of the green feather to every corner of the internet.</p>
         <div class="community-ctas">
           <a href="https://x.com/RobinPump_xyz" target="_blank" rel="noopener noreferrer" class="btn btn-social">
-            <span class="social-icon">𝕏</span> Twitter / X
+            <svg class="btn-icon" aria-hidden="true"><use href="#icon-x"/></svg>
+            Twitter / X
           </a>
           <a href="#" class="btn btn-social">
-            <span class="social-icon">✈️</span> Telegram
+            <svg class="btn-icon" aria-hidden="true"><use href="#icon-telegram"/></svg>
+            Telegram
           </a>
           <a href="#" class="btn btn-primary btn-lg">
-            🚀 Buy on Pump.fun
+            <svg class="btn-icon" aria-hidden="true"><use href="#icon-rocket"/></svg>
+            Buy on Pump.fun
           </a>
         </div>
       </div>
@@ -312,7 +427,7 @@
         <div class="faq-item">
           <button class="faq-question" aria-expanded="false">
             <span>What is RobinPump?</span>
-            <span class="faq-icon">+</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
           </button>
           <div class="faq-answer">
             <p>RobinPump is a community meme coin launched on Pump.fun and built on Solana. It's inspired by internet culture, powered by the community, and fueled entirely by meme energy. That's it. That's the pitch.</p>
@@ -321,7 +436,7 @@
         <div class="faq-item">
           <button class="faq-question" aria-expanded="false">
             <span>Is RobinPump affiliated with Robinhood?</span>
-            <span class="faq-icon">+</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
           </button>
           <div class="faq-answer">
             <p>Absolutely not. RobinPump is an independent community meme coin with zero affiliation to Robinhood Markets, Inc. The name is inspired by internet meme culture, nothing more. We are not Robinhood. We are not affiliated with Robinhood. We are just a feather with big dreams.</p>
@@ -330,7 +445,7 @@
         <div class="faq-item">
           <button class="faq-question" aria-expanded="false">
             <span>Why the Feather and Capsule?</span>
-            <span class="faq-icon">+</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
           </button>
           <div class="faq-answer">
             <p>Because the internet decided a legendary green feather finding a mysterious green capsule is peak meme energy. Lore doesn't always need to make sense — it just needs to be iconic. The feather chose us.</p>
@@ -339,7 +454,7 @@
         <div class="faq-item">
           <button class="faq-question" aria-expanded="false">
             <span>Does RobinPump have utility?</span>
-            <span class="faq-icon">+</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
           </button>
           <div class="faq-answer">
             <p>RobinPump's utility is the meme. The community. The culture. It is not a financial instrument, a staking protocol, or a DeFi platform. It's a meme coin, and it wears that badge proudly.</p>
@@ -348,7 +463,7 @@
         <div class="faq-item">
           <button class="faq-question" aria-expanded="false">
             <span>Where can I buy RobinPump?</span>
-            <span class="faq-icon">+</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
           </button>
           <div class="faq-answer">
             <p>Head to Pump.fun and search for ROBINPUMP. Once it graduates, you'll find it on Raydium too. Always DYOR, never ape more than you can afford to lose, and may the green feather be with you.</p>
@@ -374,8 +489,12 @@
           <a href="#faq">FAQ</a>
         </div>
         <div class="footer-socials">
-          <a href="https://x.com/RobinPump_xyz" target="_blank" rel="noopener noreferrer" class="footer-social" aria-label="Twitter">𝕏</a>
-          <a href="#" class="footer-social" aria-label="Telegram">✈️</a>
+          <a href="https://x.com/RobinPump_xyz" target="_blank" rel="noopener noreferrer" class="footer-social" aria-label="Twitter / X">
+            <svg aria-hidden="true"><use href="#icon-x"/></svg>
+          </a>
+          <a href="#" class="footer-social" aria-label="Telegram">
+            <svg aria-hidden="true"><use href="#icon-telegram"/></svg>
+          </a>
         </div>
       </div>
       <div class="footer-tagline">No VC. No Insiders. Just Memes.</div>

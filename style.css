@@ -107,6 +107,86 @@ img { max-width: 100%; display: block; height: auto; }
 }
 .social-icon { font-style: normal; font-size: 16px; }
 
+/* --- SVG Icons --- */
+.btn-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.btn-lg .btn-icon {
+  width: 20px;
+  height: 20px;
+}
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  color: var(--green);
+  animation: livePulse 1.8s ease-in-out infinite;
+}
+@keyframes livePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.feature-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--green-dim);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  margin-bottom: 20px;
+  color: var(--green);
+  transition: var(--transition);
+}
+.feature-icon svg {
+  width: 22px;
+  height: 22px;
+}
+.feature-card:hover .feature-icon {
+  background: rgba(0,255,136,0.15);
+  border-color: var(--green);
+  box-shadow: 0 0 16px var(--green-glow);
+}
+.story-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--green-dim);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  color: var(--green);
+}
+.story-icon svg {
+  width: 26px;
+  height: 26px;
+}
+.story-arrow {
+  color: var(--green);
+  opacity: 0.4;
+  display: flex;
+  align-items: center;
+}
+.feather-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--green);
+  opacity: 0.6;
+  margin-top: -4px;
+}
+.feather-card-icon svg {
+  width: 28px;
+  height: 28px;
+}
+.footer-social svg {
+  width: 16px;
+  height: 16px;
+}
+
 /* --- Navbar --- */
 .navbar {
   position: fixed;
@@ -425,9 +505,7 @@ img { max-width: 100%; display: block; height: auto; }
   inset: 0;
   background: radial-gradient(circle at 50% 40%, rgba(0,255,136,0.1) 0%, transparent 70%);
 }
-.feather-emoji { font-size: 72px; position: relative; animation: featherFloat 3s ease-in-out infinite; }
-.capsule-emoji { font-size: 36px; position: relative; opacity: 0.7; }
-@keyframes featherFloat {
+.feather-label {
   0%, 100% { transform: translateY(0) rotate(-5deg); }
   50% { transform: translateY(-12px) rotate(5deg); }
 }
@@ -439,6 +517,10 @@ img { max-width: 100%; display: block; height: auto; }
   letter-spacing: 2px;
 }
 .feather-sub { font-size: 11px; color: var(--text-muted); }
+@keyframes featherFloat {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-12px) rotate(3deg); }
+}
 
 /* --- Story --- */
 .story { background: var(--bg); }
