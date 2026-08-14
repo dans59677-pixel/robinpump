@@ -170,6 +170,19 @@ img { max-width: 100%; display: block; height: auto; }
   display: flex;
   align-items: center;
 }
+
+/* --- Green Flock collection --- */
+.flock { overflow: hidden; background: linear-gradient(120deg, rgba(0,255,136,.045), transparent 52%); }
+.flock-layout { display: grid; grid-template-columns: minmax(0, .9fr) minmax(340px, 1.1fr); align-items: center; gap: clamp(36px, 7vw, 88px); }
+.flock-copy > p { max-width: 52ch; color: var(--text-muted); font-size: 16px; }
+.flock-actions { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-top: 28px; }
+.flock-gallery { position: relative; min-height: 430px; isolation: isolate; }
+.flock-gallery::before { content: ''; position: absolute; inset: 12% 8%; border-radius: 50%; background: var(--green); opacity: .14; filter: blur(68px); z-index: -1; }
+.flock-card { position: absolute; width: min(54%, 258px); aspect-ratio: 1; object-fit: cover; border: 1px solid rgba(0,255,136,.28); border-radius: 18px; box-shadow: 0 24px 54px rgba(0,0,0,.42); transition: transform var(--transition), border-color var(--transition); }
+.flock-card:hover { border-color: var(--green); z-index: 4; }
+.flock-card--one { left: 4%; top: 8%; transform: rotate(-9deg); }.flock-card--one:hover { transform: rotate(-4deg) translateY(-9px); }
+.flock-card--two { right: 8%; top: 2%; transform: rotate(8deg); }.flock-card--two:hover { transform: rotate(3deg) translateY(-9px); }
+.flock-card--three { left: 28%; bottom: 0; transform: rotate(-1deg); }.flock-card--three:hover { transform: rotate(0) translateY(-9px); }
 .feather-card-icon {
   display: flex;
   align-items: center;
@@ -1122,6 +1135,9 @@ img { max-width: 100%; display: block; height: auto; }
   .about-visual { order: -1; }
   .feather-card { width: 240px; height: 280px; }
 
+  .flock-layout { grid-template-columns: 1fr; gap: 34px; }
+  .flock-gallery { max-width: 580px; width: 100%; margin: 0 auto; }
+
   /* Features */
   .features-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
 
@@ -1249,6 +1265,11 @@ img { max-width: 100%; display: block; height: auto; }
 
   /* Feather card */
   .feather-card { width: 100%; max-width: 280px; }
+
+  .flock-gallery { min-height: 310px; }
+  .flock-card { width: min(58%, 190px); border-radius: 14px; }
+  .flock-card--one { left: 0; }.flock-card--two { right: 1%; }.flock-card--three { left: 21%; }
+  .flock-actions { align-items: flex-start; flex-direction: column; gap: 12px; }
 
   /* Roadmap */
   .roadmap-dot { width: 14px; height: 14px; min-width: 14px; }

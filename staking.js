@@ -120,6 +120,7 @@ function updateDetectedNetwork(chainId) {
   setText('detectedNetworkText', isExpected
     ? `${CFG.network.label} detected. Refreshing your on-chain Green Flock data…`
     : `Your wallet is connected to ${describeChain(chainId)}. Switch to Robinhood Chain (Chain ID: ${CFG.network.chainId}) to view Green Flock NFTs.`);
+  if (isExpected) hide('wrongNetworkPrompt');
 }
 
 // ── Chain management ──────────────────────────────────────────────────────────
@@ -424,12 +425,14 @@ async function refreshState() {
     onCorrectChain = isRobinhoodChain(chainId);
     if (!onCorrectChain) {
       hide('stakingDashboard');
+      hide('connectPrompt');
       show('wrongNetworkPrompt');
       hide('nftLoading');
       refreshLock = false;
       return;
     }
     hide('wrongNetworkPrompt');
+    hide('connectPrompt');
     show('stakingDashboard');
 
     // 2. Wallet short display
