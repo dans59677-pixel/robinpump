@@ -24,6 +24,7 @@ const hide = id => { const el = $(id); if (el) el.hidden = true; };
 // ── State ────────────────────────────────────────────────────────────────────
 let account = null;
 let onCorrectChain = false;
+let detectedChainId = null;
 let nftData = [];          // [{tokenId, metadata, tier, stakedStatus, pending}]
 let refreshLock = false;
 let activeTab = 'available';
@@ -98,13 +99,36 @@ async function call(to, data) {
   return rpc('eth_call', [{ to, data }, 'latest']);
 }
 
+function normaliseChainId(chainId) {
+  try { return BigInt(chainId); } catch { return null; }
+}
+
+function isRobinhoodChain(chainId) {
+  const actual = normaliseChainId(chainId);
+  return actual !== null && actual === BigInt(CFG.network.chainId);
+}
+
+function describeChain(chainId) {
+  const normalised = normaliseChainId(chainId);
+  return normalised === null ? 'Unknown network' : `Chain ID: ${normalised.toString()}`;
+}
+
+function updateDetectedNetwork(chainId) {
+  detectedChainId = chainId;
+  const isExpected = isRobinhoodChain(chainId);
+  setText('walletNetwork', isExpected ? `${CFG.network.label} · ${describeChain(chainId)}` : describeChain(chainId));
+  setText('detectedNetworkText', isExpected
+    ? `${CFG.network.label} detected. Refreshing your on-chain Green Flock data…`
+    : `Your wallet is connected to ${describeChain(chainId)}. Switch to Robinhood Chain (Chain ID: ${CFG.network.chainId}) to view Green Flock NFTs.`);
+}
+
 // ── Chain management ──────────────────────────────────────────────────────────
 async function ensureRobinhoodChain() {
   const current = await rpc('eth_chainId');
-  if (current.toLowerCase() === CFG.network.chainIdHex) return true;
+  updateDetectedNetwork(current);
+  if (isRobinhoodChain(current)) return true;
   try {
     await rpc('wallet_switchEthereumChain', [{ chainId: CFG.network.chainIdHex }]);
-    return true;
   } catch (err) {
     if (err.code !== 4902) throw err;
     await rpc('wallet_addEthereumChain', [{
@@ -114,8 +138,11 @@ async function ensureRobinhoodChain() {
       rpcUrls: [CFG.network.rpcUrl],
       blockExplorerUrls: [CFG.network.explorerUrl]
     }]);
-    return true;
   }
+  const switched = await rpc('eth_chainId');
+  updateDetectedNetwork(switched);
+  if (!isRobinhoodChain(switched)) throw new Error(`Wallet remained on ${describeChain(switched)}.`);
+  return true;
 }
 
 // ── NFT ownership via Transfer event logs ─────────────────────────────────────
@@ -393,7 +420,8 @@ async function refreshState() {
   try {
     // 1. Check chain
     const chainId = await rpc('eth_chainId');
-    onCorrectChain = chainId.toLowerCase() === CFG.network.chainIdHex;
+    updateDetectedNetwork(chainId);
+    onCorrectChain = isRobinhoodChain(chainId);
     if (!onCorrectChain) {
       hide('stakingDashboard');
       show('wrongNetworkPrompt');
@@ -406,7 +434,7 @@ async function refreshState() {
 
     // 2. Wallet short display
     setText('walletShort', shortAddress(account));
-    setText('walletNetwork', CFG.network.label);
+    setText('walletNetwork', `${CFG.network.label} · ${describeChain(chainId)}`);
     $('walletInfo').hidden = false;
     $('connectWalletNav').textContent = shortAddress(account);
 
@@ -422,6 +450,9 @@ async function refreshState() {
       getOwnedTokenIds(account)
     ]);
     const nftBalance = decodeUint(nftBalRaw);
+    if (nftBalance !== BigInt(tokenIds.length)) {
+      throw new Error('NFT ownership index is still syncing. Please try again shortly.');
+    }
     setText('statYourNfts', nftBalance.toString());
 
     // 5. Fetch metadata for each owned NFT (parallel, lazy)
@@ -595,9 +626,24 @@ if (window.ethereum) {
     account = accs?.[0] || null;
     account ? refreshState() : resetState();
   });
-  window.ethereum.on('chainChanged', () => {
+  window.ethereum.on('chainChanged', chainId => {
+    updateDetectedNetwork(chainId);
     if (account) refreshState();
   });
+
+  (async () => {
+    try {
+      const [accounts, chainId] = await Promise.all([rpc('eth_accounts'), rpc('eth_chainId')]);
+      updateDetectedNetwork(chainId);
+      account = accounts?.[0] || null;
+      if (account) {
+        hide('connectPrompt');
+        await refreshState();
+      }
+    } catch {
+      // Wallets may reject passive reads while locked; the explicit connect button remains available.
+    }
+  })();
 }
 
 // Staking contract status banner
