@@ -21,6 +21,15 @@ const setText = (id, v) => { const el = $(id); if (el) el.textContent = v; };
 const show = id => { const el = $(id); if (el) el.hidden = false; };
 const hide = id => { const el = $(id); if (el) el.hidden = true; };
 
+function updateHeaderWalletAction(connected) {
+  const button = $('connectWalletNav');
+  if (!button) return;
+  button.textContent = connected ? 'Disconnect' : 'Connect Wallet';
+  button.setAttribute('aria-label', connected ? 'Disconnect wallet from RobinPump' : 'Connect wallet');
+  button.classList.toggle('btn-outline', connected);
+  button.classList.toggle('btn-primary', !connected);
+}
+
 // ── State ────────────────────────────────────────────────────────────────────
 let account = null;
 let onCorrectChain = false;
@@ -423,6 +432,9 @@ async function refreshState() {
     const chainId = await rpc('eth_chainId');
     updateDetectedNetwork(chainId);
     onCorrectChain = isRobinhoodChain(chainId);
+    setText('walletShort', shortAddress(account));
+    $('walletInfo').hidden = false;
+    updateHeaderWalletAction(true);
     if (!onCorrectChain) {
       hide('stakingDashboard');
       hide('connectPrompt');
@@ -436,10 +448,7 @@ async function refreshState() {
     show('stakingDashboard');
 
     // 2. Wallet short display
-    setText('walletShort', shortAddress(account));
     setText('walletNetwork', `${CFG.network.label} · ${describeChain(chainId)}`);
-    $('walletInfo').hidden = false;
-    $('connectWalletNav').textContent = shortAddress(account);
 
     // 3. Read token balance
     const balRaw = await call(CFG.rewardToken.address, `0x70a08231${encodeAddr(account)}`);
@@ -518,8 +527,13 @@ async function connectWallet(btn) {
     }
     if (btn) { btn.disabled = false; btn.textContent = 'Connect Wallet'; }
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = account ? shortAddress(account) : 'Connect Wallet'; }
+    if (btn) btn.disabled = false;
   }
+}
+
+function disconnectWallet() {
+  resetState();
+  toast('info', 'Wallet disconnected.', 'RobinPump has cleared this browser session. Your wallet remains under your control.');
 }
 
 function resetState() {
@@ -530,7 +544,7 @@ function resetState() {
   hide('wrongNetworkPrompt');
   show('connectPrompt');
   hide('walletInfo');
-  setText('connectWalletNav', 'Connect Wallet');
+  updateHeaderWalletAction(false);
   setText('statYourNfts', '—');
   setText('statStaked', '—');
   setText('statDaily', '—');
@@ -600,9 +614,9 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 // Connect buttons
 $('connectWalletNav')?.addEventListener('click', () => {
-  if (!account) connectWallet($('connectWalletNav'));
+  if (account) disconnectWallet();
+  else connectWallet($('connectWalletNav'));
 });
-$('connectWalletMain')?.addEventListener('click', e => connectWallet(e.currentTarget));
 $('switchNetworkBtn')?.addEventListener('click', async () => {
   try { await ensureRobinhoodChain(); await refreshState(); }
   catch (err) { toast('error', 'Network switch failed.', friendlyError(err)); }
