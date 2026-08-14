@@ -26,27 +26,30 @@
         <img src="logo.jpeg" alt="RobinPump logo" class="nav-logo-img" />
         <span class="logo-text">ROBINPUMP</span>
       </a>
-      <ul class="nav-links">
+      <ul class="nav-links" id="navLinks">
         <li><a href="index.html#about">About</a></li>
         <li><a href="index.html#tokenomics">Tokenomics</a></li>
         <li><a href="index.html#roadmap">Roadmap</a></li>
-        <li><a href="staking.html" class="nav-link-staking">
+        <li><a href="staking.html" class="nav-link-staking" aria-current="page">
           <span class="staking-dot" aria-hidden="true"></span>Staking
         </a></li>
       </ul>
       <div class="nav-wallet-area">
-        <div class="wallet-info" id="walletInfo" hidden>
-          <div class="wallet-badge">
-            <span class="wallet-dot"></span>
+        <div class="wallet-chip" id="walletInfo" hidden>
+          <span class="wallet-chip-net" id="walletNetwork">
+            <span class="wallet-dot" aria-hidden="true"></span>
+            <span id="walletNetworkLabel">—</span>
+          </span>
+          <button type="button" class="wallet-chip-addr" id="walletCopyBtn" aria-label="Copy wallet address">
             <span id="walletShort">—</span>
-          </div>
-          <span class="wallet-network" id="walletNetwork">—</span>
+            <svg class="wallet-copy-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          </button>
         </div>
         <button type="button" class="btn btn-primary nav-cta" id="connectWalletNav">Connect Wallet</button>
+        <button class="hamburger" id="hamburger" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+          <span></span><span></span><span></span>
+        </button>
       </div>
-      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
-        <span></span><span></span><span></span>
-      </button>
     </div>
   </nav>
 
@@ -55,11 +58,42 @@
 
   <main class="staking-main">
 
+    <!-- PREVIEW MODE BANNER — shown only by staking.js when ?demo=1 is present -->
+    <div class="demo-banner" id="demoBanner" role="status" hidden>
+      <div class="container demo-banner-inner">
+        <span class="demo-banner-tag">PREVIEW MODE</span>
+        <p>
+          You are viewing a simulation with synthetic NFTs. No wallet is connected, no data is read
+          from Robinhood Chain, and no transaction can be signed.
+          <a href="staking.html">Leave preview</a>
+        </p>
+      </div>
+    </div>
+
     <!-- HERO -->
     <section class="staking-hero container">
       <p class="section-label">// GREEN FLOCK NFT STAKING</p>
       <h1>Stake Your NFTs.<br /><span class="gradient-text">Earn $ROBINPUMP.</span></h1>
       <p class="staking-lede">Connect your wallet to view your Green Flock NFTs on Robinhood Chain and earn $ROBINPUMP rewards.</p>
+
+      <ul class="staking-hero-chips" aria-label="Collection facts">
+        <li class="hero-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3A5 5 0 0 0 13 3l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3A5 5 0 0 0 11 21l1.5-1.5"/></svg>
+          Chain <strong>4663</strong>
+        </li>
+        <li class="hero-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <strong>3,333</strong> NFTs
+        </li>
+        <li class="hero-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 17l10 5 10-5"/></svg>
+          <strong>5</strong> rarity tiers
+        </li>
+        <li class="hero-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          <strong>Non-custodial</strong>
+        </li>
+      </ul>
 
       <!-- CONTRACT STATUS BANNER -->
       <div class="staking-notice" id="stakingNotice" role="status">
@@ -84,8 +118,8 @@
           <h2 id="collection-showcase-title">Meet the <span class="gradient-text">Green Flock.</span></h2>
           <p>Each verified ERC-721 is uniquely represented on Robinhood Chain. Connect your wallet to discover the Green Flock NFTs you actually hold.</p>
           <div class="collection-actions">
-            <a class="btn btn-outline" href="https://robinhoodchain.blockscout.com/token/0xbd00ce673b84be8022af8be0039c7a5af69724a9" target="_blank" rel="noopener noreferrer">View collection</a>
-            <a class="collection-anchor" href="#stakingDashboard">Open dashboard <span aria-hidden="true">→</span></a>
+            <a class="btn btn-outline" href="https://robinhoodchain.blockscout.com/address/0xbd00ce673b84be8022af8be0039c7a5af69724a9" target="_blank" rel="noopener noreferrer">View collection</a>
+            <a class="collection-anchor" href="#stakingDashboard">Open dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></a>
           </div>
         </div>
       </div>
@@ -176,34 +210,76 @@
       <p class="staking-runtime-status" id="runtimeStatus" role="status" hidden></p>
 
       <!-- TABS -->
-      <div class="dashboard-tabs" id="dashboardTabs" hidden>
-        <button class="tab-btn tab-btn--active" data-tab="available">
-          My NFTs <span class="tab-count" id="tabCountAvailable">0</span>
-        </button>
-        <button class="tab-btn" data-tab="staked">
-          Staked <span class="tab-count" id="tabCountStaked">0</span>
+      <div class="dashboard-toolbar" id="dashboardTabs" hidden>
+        <div class="dashboard-tabs" role="tablist" aria-label="NFT views">
+          <button class="tab-btn tab-btn--active" type="button" role="tab" id="tabAvailable"
+                  data-tab="available" aria-selected="true" aria-controls="panelAvailable">
+            My NFTs <span class="tab-count" id="tabCountAvailable">0</span>
+          </button>
+          <button class="tab-btn" type="button" role="tab" id="tabStaked" tabindex="-1"
+                  data-tab="staked" aria-selected="false" aria-controls="panelStaked">
+            Staked <span class="tab-count" id="tabCountStaked">0</span>
+          </button>
+        </div>
+        <button type="button" class="btn btn-outline btn-sm dashboard-refresh" id="refreshBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg>
+          Refresh
         </button>
       </div>
 
-      <!-- NFT GRIDS -->
-      <div class="nft-grid" id="nftGridAvailable" aria-label="Available NFTs" aria-live="polite"></div>
-      <div class="nft-grid" id="nftGridStaked" aria-label="Staked NFTs" aria-live="polite" hidden></div>
-
-      <!-- EMPTY STATES -->
-      <div class="empty-state" id="emptyAvailable" hidden>
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-        <p>No Green Flock NFTs found in this wallet.</p>
+      <!-- TAB PANELS -->
+      <div class="tab-panel" id="panelAvailable" role="tabpanel" aria-labelledby="tabAvailable" tabindex="0">
+        <div class="nft-grid" id="nftGridAvailable" aria-label="Available NFTs" aria-live="polite"></div>
+        <div class="empty-state" id="emptyAvailable" hidden>
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          <p>This nest is empty — no Green Flock NFTs in this wallet.</p>
+          <a class="btn btn-outline btn-sm empty-cta" href="https://robinhoodchain.blockscout.com/address/0xbd00ce673b84be8022af8be0039c7a5af69724a9" target="_blank" rel="noopener noreferrer">Browse the collection</a>
+        </div>
       </div>
-      <div class="empty-state" id="emptyStaked" hidden>
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        <p>No NFTs staked yet.</p>
+      <div class="tab-panel" id="panelStaked" role="tabpanel" aria-labelledby="tabStaked" tabindex="0" hidden>
+
+        <!-- LIVE STAKING SUMMARY -->
+        <div class="stake-summary" id="stakeSummary" hidden>
+          <div class="stake-summary-live">
+            <span class="stake-summary-label">
+              <span class="live-dot" aria-hidden="true"></span> Earning right now
+            </span>
+            <strong class="stake-summary-amount" id="liveEarnedValue" aria-live="off">0</strong>
+            <span class="stake-summary-unit">$ROBINPUMP accrued, updating every second</span>
+          </div>
+          <dl class="stake-summary-grid">
+            <div>
+              <dt>Emission rate</dt>
+              <dd id="summaryRateValue">—</dd>
+            </div>
+            <div>
+              <dt>Claimable now</dt>
+              <dd id="summaryClaimableValue">—</dd>
+            </div>
+            <div>
+              <dt>Next claim unlocks</dt>
+              <dd id="summaryNextClaimValue">—</dd>
+            </div>
+            <div>
+              <dt>Locked / unlocked</dt>
+              <dd id="summaryLockValue">—</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="nft-grid" id="nftGridStaked" aria-label="Staked NFTs" aria-live="polite"></div>
+        <div class="empty-state" id="emptyStaked" hidden>
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <p>Nothing staked yet. Your birds are still free range.</p>
+        </div>
       </div>
 
       <!-- CLAIM ALL -->
       <div class="claim-all-bar" id="claimAllBar" hidden>
         <div>
-          <span class="claim-all-label">Total Pending Rewards</span>
+          <span class="claim-all-label">Claimable Right Now</span>
           <strong class="claim-all-amount" id="claimAllAmount">0 ROBINPUMP</strong>
+          <span class="claim-all-hint" id="claimAllHint">Each NFT can be claimed once every 24 hours.</span>
         </div>
         <button type="button" class="btn btn-primary" id="claimAllBtn" disabled aria-disabled="true">
           Claim All Rewards
@@ -230,7 +306,7 @@
           <div class="contract-address-row">
             <code id="rewardAddress">0xb5Ea549fc8Ad1665aCda9051e91aDe6A371B7BFf</code>
             <button type="button" class="copy-btn" data-copy="0xb5Ea549fc8Ad1665aCda9051e91aDe6A371B7BFf">Copy</button>
-            <a href="https://robinhoodchain.blockscout.com/token/0xb5Ea549fc8Ad1665aCda9051e91aDe6A371B7BFf" target="_blank" rel="noopener noreferrer" class="explorer-link">Explorer ↗</a>
+            <a href="https://robinhoodchain.blockscout.com/address/0xb5Ea549fc8Ad1665aCda9051e91aDe6A371B7BFf" target="_blank" rel="noopener noreferrer" class="explorer-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
           </div>
         </div>
         <div class="contract-card">
@@ -245,7 +321,7 @@
           <div class="contract-address-row">
             <code>0xbd00ce673b84be8022af8be0039c7a5af69724a9</code>
             <button type="button" class="copy-btn" data-copy="0xbd00ce673b84be8022af8be0039c7a5af69724a9">Copy</button>
-            <a href="https://robinhoodchain.blockscout.com/token/0xbd00ce673b84be8022af8be0039c7a5af69724a9" target="_blank" rel="noopener noreferrer" class="explorer-link">Explorer ↗</a>
+            <a href="https://robinhoodchain.blockscout.com/address/0xbd00ce673b84be8022af8be0039c7a5af69724a9" target="_blank" rel="noopener noreferrer" class="explorer-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
           </div>
         </div>
         <div class="contract-card contract-card--disabled">
@@ -351,6 +427,69 @@
       <p class="footer-disclaimer-small">RobinPump is an independent community meme coin. Not affiliated with Robinhood Markets, Inc. This is not financial advice.</p>
     </div>
   </footer>
+
+  <!-- LOCK DURATION PICKER -->
+  <div class="lock-modal" id="lockModal" role="dialog" aria-modal="true" aria-labelledby="lockModalTitle" hidden>
+    <div class="lock-modal-backdrop" data-lock-dismiss="true"></div>
+    <div class="lock-modal-card" role="document">
+      <button type="button" class="lock-modal-close" id="lockCancelBtn" aria-label="Cancel staking">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+      </button>
+
+      <p class="card-eyebrow">CHOOSE YOUR LOCK</p>
+      <h3 id="lockModalTitle">Stake Green Flock <span id="lockModalToken">#0000</span></h3>
+      <p class="lock-modal-sub" id="lockModalSub">
+        Pick how long this NFT stays locked. Minimum 7 days, maximum 3 years.
+        Rewards accrue every second for the whole term and can be claimed once
+        per day while locked.
+      </p>
+
+      <div class="lock-presets" id="lockPresets" role="group" aria-label="Lock duration presets">
+        <button type="button" class="lock-preset" data-lock-days="7">7 days</button>
+        <button type="button" class="lock-preset" data-lock-days="30">30 days</button>
+        <button type="button" class="lock-preset" data-lock-days="90">90 days</button>
+        <button type="button" class="lock-preset" data-lock-days="180">180 days</button>
+        <button type="button" class="lock-preset" data-lock-days="365">1 year</button>
+        <button type="button" class="lock-preset" data-lock-days="730">2 years</button>
+        <button type="button" class="lock-preset" data-lock-days="1095">3 years</button>
+      </div>
+
+      <div class="lock-slider-row">
+        <label class="lock-slider-label" for="lockRange">Lock duration</label>
+        <output class="lock-slider-output" id="lockDaysOutput" for="lockRange">7 days</output>
+      </div>
+      <input type="range" id="lockRange" class="lock-range" min="7" max="1095" step="1" value="7"
+             aria-describedby="lockUnlockDate" />
+      <div class="lock-range-scale" aria-hidden="true">
+        <span>7d</span><span>1y</span><span>2y</span><span>3y</span>
+      </div>
+
+      <dl class="lock-preview">
+        <div>
+          <dt>Unlocks on</dt>
+          <dd id="lockUnlockDate">—</dd>
+        </div>
+        <div>
+          <dt>Estimated total</dt>
+          <dd id="lockRewardEstimate">—</dd>
+        </div>
+        <div>
+          <dt>First claim available</dt>
+          <dd id="lockFirstClaim">—</dd>
+        </div>
+      </dl>
+
+      <p class="lock-warning" id="lockWarning">
+        This lock cannot be shortened or cancelled. The NFT stays in escrow until
+        the term ends — there is no early withdrawal.
+      </p>
+
+      <div class="lock-modal-actions">
+        <button type="button" class="btn btn-outline" id="lockDismissBtn">Cancel</button>
+        <button type="button" class="btn btn-primary" id="lockConfirmBtn">Approve &amp; Stake</button>
+      </div>
+    </div>
+  </div>
 
   <script src="staking-config.js"></script>
   <script src="staking.js"></script>

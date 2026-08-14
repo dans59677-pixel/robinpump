@@ -2,17 +2,76 @@
    ROBINPUMP — staking.css
    =========================== */
 
+/* --- Hidden state (must beat class-level display rules below) --- */
+[hidden] { display: none !important; }
+
+/* --- Icon system -----------------------------------------------------------
+   The page uses stroke-based inline SVG instead of emoji/dingbat characters so
+   every glyph renders identically on all platforms and inherits currentColor.
+   Where an icon belongs to a CSS-only decoration (::before), it is delivered as
+   a mask so the shape is tinted by the element's own colour.
+   -------------------------------------------------------------------------- */
+:root {
+  --icon-alert: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z'/%3E%3Cline x1='12' y1='9' x2='12' y2='13'/%3E%3Cline x1='12' y1='17' x2='12.01' y2='17'/%3E%3C/svg%3E");
+}
+
+/* Inline icons: sized by context, never scaled by the text baseline. */
+.hero-chip svg,
+.collection-anchor svg,
+.explorer-link svg,
+.toast-tx svg,
+.lock-modal-close svg {
+  flex-shrink: 0;
+  vertical-align: -.125em;
+}
+
 /* --- Page base --- */
 .staking-page {
   min-height: 100vh;
   background: radial-gradient(circle at 50% -8%, rgba(0,255,136,.1), transparent 38%), var(--bg);
 }
-.staking-main { padding: 140px 0 100px; display: flex; flex-direction: column; gap: 80px; }
+.staking-main { padding: 132px 0 100px; display: flex; flex-direction: column; gap: clamp(56px, 7vw, 88px); }
 
 /* --- Hero --- */
 .staking-hero { max-width: 860px; text-align: center; margin: 0 auto; }
 .staking-hero h1 { font-size: clamp(40px, 7vw, 78px); line-height: 1.05; letter-spacing: -2px; margin-bottom: 18px; }
-.staking-lede { font-size: clamp(16px, 2vw, 20px); color: var(--text-muted); max-width: 54ch; margin: 0 auto 32px; }
+.staking-lede { font-size: clamp(16px, 2vw, 20px); color: var(--text-muted); max-width: 54ch; margin: 0 auto 28px; }
+
+/* --- Hero fact chips --- */
+.staking-hero-chips {
+  list-style: none; display: flex; justify-content: center; flex-wrap: wrap;
+  gap: 10px; margin: 0 0 30px;
+}
+.hero-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 14px; border-radius: 50px;
+  background: var(--card); border: 1px solid var(--card-border);
+  font: 12px/1 var(--mono); color: var(--text-muted); white-space: nowrap;
+}
+.hero-chip strong { color: var(--text); font-weight: 700; }
+.hero-chip svg { width: 14px; height: 14px; color: var(--green); }
+
+/* --- Preview / demo mode banner --- */
+/* Deliberately loud: a simulated session must never be mistaken for a live one. */
+.demo-banner {
+  background: linear-gradient(90deg, rgba(255, 176, 32, .18), rgba(255, 96, 176, .18));
+  border-bottom: 1px solid rgba(255, 176, 32, .45);
+  padding: 12px 0;
+  margin-bottom: 8px;
+}
+.demo-banner-inner { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.demo-banner-tag {
+  flex-shrink: 0;
+  background: #ffb020;
+  color: #1a1205;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: .12em;
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+.demo-banner p { margin: 0; color: var(--text-muted); font-size: 14px; line-height: 1.6; text-align: left; }
+.demo-banner a { color: #ffe29a; font-weight: 600; text-decoration: underline; }
 
 /* --- Notice banner --- */
 .staking-notice {
@@ -38,7 +97,9 @@
 .collection-copy h2 { font-size: clamp(32px, 4vw, 56px); line-height: 1.06; margin: 8px 0 18px; }
 .collection-copy > p:not(.section-label) { max-width: 52ch; color: var(--text-muted); font-size: 16px; }
 .collection-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; margin-top: 26px; }
-.collection-anchor { color: var(--green); font: 700 13px var(--mono); }.collection-anchor span { transition: transform var(--transition); display: inline-block; }.collection-anchor:hover span { transform: translateX(4px); }
+.collection-anchor { color: var(--green); font: 700 13px var(--mono); display: inline-flex; align-items: center; gap: 6px; }
+.collection-anchor svg { width: 15px; height: 15px; transition: transform var(--transition); }
+.collection-anchor:hover svg { transform: translateX(4px); }
 .nft-marquee { overflow: hidden; padding: 14px 0; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
 .nft-marquee-track { display: flex; width: max-content; animation: nftMarquee 46s linear infinite; }
 .nft-marquee-set { display: flex; gap: 14px; padding-right: 14px; }
@@ -48,26 +109,54 @@
 
 /* --- Navbar wallet area --- */
 .nav-wallet-area { display: flex; align-items: center; gap: 10px; margin-left: auto; }
-.wallet-info { display: flex; align-items: center; gap: 10px; }
-.wallet-badge {
-  display: flex; align-items: center; gap: 6px;
-  background: var(--card); border: 1px solid var(--card-border);
-  border-radius: 50px; padding: 6px 14px;
-  font-family: var(--mono); font-size: 13px; color: var(--text);
+
+/* Single connected-wallet chip: network segment + address segment */
+.wallet-chip {
+  display: inline-flex; align-items: stretch; overflow: hidden;
+  border: 1px solid var(--card-border); border-radius: 50px;
+  background: var(--card); backdrop-filter: blur(8px);
+  font-family: var(--mono); line-height: 1;
 }
-.wallet-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); flex-shrink: 0; }
-.wallet-network { font-size: 12px; color: var(--text-muted); font-family: var(--mono); }
+.wallet-chip-net {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 12px; font-size: 12px; color: var(--text-muted);
+  border-right: 1px solid var(--card-border); white-space: nowrap;
+}
+.wallet-chip--wrong { border-color: rgba(245,196,81,.45); background: rgba(245,196,81,.06); }
+.wallet-chip--wrong .wallet-chip-net { color: #ffe29a; border-right-color: rgba(245,196,81,.3); }
+.wallet-dot {
+  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+  background: var(--green); box-shadow: 0 0 6px var(--green);
+  animation: livePulse 1.8s ease-in-out infinite;
+}
+.wallet-chip--wrong .wallet-dot { background: #f5c451; box-shadow: 0 0 6px #f5c451; animation: none; }
+.wallet-chip-addr {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 13px; border: none; background: transparent; cursor: pointer;
+  font-family: var(--mono); font-size: 13px; color: var(--text);
+  transition: var(--transition);
+}
+.wallet-chip-addr:hover { background: var(--green-dim); color: var(--green); }
+.wallet-copy-icon { opacity: .5; flex-shrink: 0; }
+.wallet-chip-addr:hover .wallet-copy-icon { opacity: 1; }
+
+/* Hamburger → X while the mobile drawer is open */
+.hamburger--open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger--open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger--open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* --- Stats bar --- */
 .staking-stats-bar {
-  display: flex; align-items: center; justify-content: center; flex-wrap: wrap;
+  display: grid; align-items: center;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   background: var(--card); border: 1px solid var(--card-border);
-  border-radius: var(--radius); padding: 20px 32px; gap: 0;
+  border-radius: var(--radius); padding: 20px 24px; gap: 0;
 }
-.staking-stat { display: flex; flex-direction: column; align-items: center; padding: 0 28px; }
-.staking-stat-label { font-size: 11px; color: var(--text-muted); letter-spacing: .5px; text-transform: uppercase; font-family: var(--mono); }
-.staking-stat-value { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--green); margin-top: 4px; }
-.staking-stat-divider { width: 1px; height: 40px; background: var(--card-border); }
+.staking-stat { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0 12px; min-width: 0; text-align: center; }
+.staking-stat-label { font-size: 10px; color: var(--text-muted); letter-spacing: .08em; text-transform: uppercase; font-family: var(--mono); line-height: 1.3; }
+.staking-stat-value { font-family: var(--mono); font-size: clamp(15px, 1.5vw, 20px); font-weight: 700; color: var(--green); overflow-wrap: anywhere; }
+.staking-stat-divider { display: none; }
+.staking-stat + .staking-stat { border-left: 1px solid var(--card-border); }
 
 /* --- Connect prompt --- */
 .connect-prompt { display: flex; justify-content: center; }
@@ -109,6 +198,10 @@
 .rate-common    { background: rgba(148,163,184,.12); border: 1px solid rgba(148,163,184,.3); color: #94a3b8; }
 
 /* --- Tabs --- */
+.dashboard-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+}
 .dashboard-tabs { display: flex; gap: 4px; background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; padding: 4px; width: fit-content; }
 .tab-btn {
   padding: 10px 20px; border-radius: 9px; border: none;
@@ -117,13 +210,20 @@
   cursor: pointer; transition: var(--transition);
   display: flex; align-items: center; gap: 8px;
 }
-.tab-btn--active { background: var(--green-dim); color: var(--green); }
+.tab-btn:hover { color: var(--text); }
+.tab-btn:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.tab-btn--active,
+.tab-btn[aria-selected="true"] { background: var(--green-dim); color: var(--green); }
 .tab-count {
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 22px; height: 22px; padding: 0 6px;
   background: var(--bg); border-radius: 50px;
   font-family: var(--mono); font-size: 11px;
 }
+.dashboard-refresh { flex: 0 0 auto !important; }
+.dashboard-refresh[disabled] { opacity: .5; cursor: not-allowed; }
+.tab-panel:focus { outline: none; }
+.tab-panel:focus-visible { outline: 2px solid var(--green); outline-offset: 4px; border-radius: var(--radius); }
 
 /* --- NFT Grid --- */
 .nft-grid {
@@ -177,8 +277,11 @@
   display: flex; flex-direction: column; align-items: center; gap: 12px;
   padding: 64px 24px; text-align: center;
   color: var(--text-muted);
+  border: 1px dashed var(--card-border); border-radius: var(--radius);
 }
 .empty-state svg { opacity: .3; }
+.empty-state p { max-width: 40ch; }
+.empty-cta { flex: 0 0 auto !important; margin-top: 4px; }
 
 /* --- Claim all bar --- */
 .claim-all-bar {
@@ -189,6 +292,148 @@
 }
 .claim-all-label { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px; }
 .claim-all-amount { font-family: var(--mono); font-size: 20px; color: var(--green); font-weight: 700; }
+.claim-all-hint { display: block; margin-top: 6px; font: 11px/1.5 var(--mono); color: var(--text-muted); opacity: .75; }
+
+/* --- Live staking summary (staked tab) --- */
+.stake-summary {
+  display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+  align-items: center; gap: clamp(20px, 4vw, 44px);
+  margin-bottom: 20px; padding: 22px 24px;
+  border: 1px solid rgba(0,255,136,.22); border-radius: var(--radius);
+  background: linear-gradient(120deg, rgba(0,255,136,.07), rgba(255,255,255,.02) 60%);
+}
+.stake-summary-live { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.stake-summary-label {
+  display: inline-flex; align-items: center; gap: 8px;
+  font: 700 10px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase;
+  color: var(--text-muted);
+}
+.live-dot {
+  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+  background: var(--green); box-shadow: 0 0 8px var(--green);
+  animation: livePulse 1.8s ease-in-out infinite;
+}
+.stake-summary-amount {
+  font-family: var(--mono); font-weight: 700; color: var(--green);
+  font-size: clamp(26px, 3.4vw, 40px); line-height: 1.05;
+  letter-spacing: -1px; overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+.stake-summary-unit { font-size: 11px; color: var(--text-muted); }
+.stake-summary-grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 20px; margin: 0;
+}
+.stake-summary-grid dt { font-size: 11px; color: var(--text-muted); }
+.stake-summary-grid dd {
+  font-family: var(--mono); font-size: 13px; margin: 3px 0 0;
+  color: var(--text); overflow-wrap: anywhere;
+}
+
+/* --- Per-card lock / claim state (emitted by buildNftCard) --- */
+.nft-meta-row {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+  margin-top: 6px; font-family: var(--mono); font-size: 11px;
+}
+.nft-meta-row dt, .nft-meta-row span:first-child { color: var(--text-muted); }
+.nft-countdown { color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.nft-countdown--ready { color: var(--green); }
+.nft-countdown--locked { color: #ffe29a; }
+.nft-lock-bar {
+  height: 4px; margin-top: 8px; border-radius: 50px; overflow: hidden;
+  background: rgba(255,255,255,.07);
+}
+.nft-lock-progress {
+  display: block; height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--green), #7dffc0);
+  transition: width var(--transition);
+}
+.nft-pending strong { font-variant-numeric: tabular-nums; }
+.btn-sm[disabled], .nft-actions .btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+/* --- Lock duration picker modal --- */
+.lock-modal { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 24px; }
+.lock-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.72); backdrop-filter: blur(4px); }
+.lock-modal-card {
+  position: relative; width: 100%; max-width: 520px;
+  max-height: calc(100vh - 48px); overflow-y: auto;
+  padding: 32px; border-radius: 24px;
+  border: 1px solid var(--card-border); background: #0d140f;
+  box-shadow: 0 24px 64px rgba(0,0,0,.6);
+  animation: slideIn .25s ease;
+}
+.lock-modal-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1px solid var(--card-border); background: transparent;
+  color: var(--text-muted); line-height: 1; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: var(--transition);
+}
+.lock-modal-close svg { width: 14px; height: 14px; vertical-align: 0; }
+.lock-modal-close:hover { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+.lock-modal-card h3 { font-size: 22px; margin: 0 0 8px; padding-right: 36px; }
+.lock-modal-card h3 span { font-family: var(--mono); color: var(--green); }
+.lock-modal-sub { font-size: 13px; line-height: 1.65; color: var(--text-muted); margin: 0 0 22px; }
+.lock-presets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+.lock-preset {
+  padding: 7px 13px; border-radius: 50px;
+  border: 1px solid var(--card-border); background: transparent;
+  font: 600 12px var(--mono); color: var(--text-muted);
+  cursor: pointer; transition: var(--transition); white-space: nowrap;
+}
+.lock-preset:hover { color: var(--text); border-color: rgba(0,255,136,.35); }
+.lock-preset:focus-visible, .lock-range:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.lock-preset--active { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+.lock-slider-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.lock-slider-label { font: 700 10px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); }
+.lock-slider-output { font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--green); font-variant-numeric: tabular-nums; }
+.lock-range {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 5px; border-radius: 50px; margin: 0;
+  background: linear-gradient(90deg, var(--green) 0%, rgba(255,255,255,.08) 0%);
+  cursor: pointer;
+}
+.lock-range::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--green); border: 3px solid #0d140f;
+  box-shadow: 0 0 0 1px var(--green), 0 0 10px rgba(0,255,136,.55);
+  cursor: pointer;
+}
+.lock-range::-moz-range-thumb {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--green); border: 3px solid #0d140f;
+  box-shadow: 0 0 0 1px var(--green); cursor: pointer;
+}
+.lock-range::-moz-range-track { height: 5px; border-radius: 50px; background: rgba(255,255,255,.08); }
+.lock-range-scale {
+  display: flex; justify-content: space-between; margin-top: 7px;
+  font: 10px var(--mono); color: var(--text-muted); opacity: .6;
+}
+.lock-preview {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px; margin: 24px 0 0; padding: 18px 0;
+  border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border);
+}
+.lock-preview dt { font-size: 10px; color: var(--text-muted); letter-spacing: .06em; text-transform: uppercase; }
+.lock-preview dd { font-family: var(--mono); font-size: 13px; margin: 4px 0 0; overflow-wrap: anywhere; }
+.lock-warning {
+  display: flex; gap: 8px; margin: 18px 0 0; padding: 12px 14px;
+  border: 1px solid rgba(245,196,81,.3); border-radius: var(--radius-sm);
+  background: rgba(245,196,81,.06);
+  font-size: 12px; line-height: 1.6; color: #ffe29a;
+}
+.lock-warning::before {
+  content: ""; flex-shrink: 0;
+  width: 14px; height: 14px; margin-top: 2px;
+  background: currentColor;
+  -webkit-mask: var(--icon-alert) center / contain no-repeat;
+  mask: var(--icon-alert) center / contain no-repeat;
+}
+.lock-modal-actions { display: flex; gap: 10px; margin-top: 22px; }
+.lock-modal-actions .btn { flex: 1; justify-content: center; }
+.lock-modal-actions .btn[disabled] { opacity: .5; cursor: not-allowed; }
 
 /* --- Loading spinner --- */
 .nft-loading { display: flex; align-items: center; gap: 16px; padding: 32px 0; }
@@ -203,7 +448,24 @@
 .spinner--sm { width: 16px; height: 16px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.staking-runtime-status { color: var(--text-muted); font-size: 14px; padding: 12px 16px; background: var(--card); border-radius: var(--radius-sm); border: 1px solid var(--card-border); }
+.staking-runtime-status {
+  color: var(--text-muted); font-size: 14px; padding: 12px 16px;
+  background: var(--card); border-radius: var(--radius-sm);
+  border: 1px solid var(--card-border);
+  display: flex; align-items: center; gap: 10px;
+}
+.staking-runtime-status--warn {
+  color: #ffe29a;
+  background: rgba(255, 196, 61, .08);
+  border-color: rgba(255, 196, 61, .32);
+}
+.staking-runtime-status--warn::before {
+  content: ""; flex-shrink: 0;
+  width: 16px; height: 16px;
+  background: currentColor;
+  -webkit-mask: var(--icon-alert) center / contain no-repeat;
+  mask: var(--icon-alert) center / contain no-repeat;
+}
 
 /* --- Contract info section --- */
 .contract-info-section h2 { font-size: clamp(28px, 4vw, 44px); margin-bottom: 28px; }
@@ -231,7 +493,11 @@
   white-space: nowrap;
 }
 .copy-btn:hover { border-color: var(--green); background: var(--green-dim); }
-.explorer-link { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+.explorer-link {
+  font-size: 12px; color: var(--text-muted); white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.explorer-link svg { width: 12px; height: 12px; }
 .explorer-link:hover { color: var(--green); }
 .status-pending-text { color: #ffe29a; }
 .contract-disabled-note { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-top: 12px; }
@@ -290,7 +556,7 @@
 .toast--success { border-color: rgba(0,255,136,.3); }
 .toast--error   { border-color: rgba(239,68,68,.3); }
 .toast--loading { border-color: rgba(0,255,136,.2); }
-.toast-icon { flex-shrink: 0; margin-top: 1px; }
+.toast-icon { flex-shrink: 0; margin-top: 1px; display: flex; }
 .toast--success .toast-icon { color: var(--green); }
 .toast--error   .toast-icon { color: #ef4444; }
 .toast--info    .toast-icon { color: var(--text-muted); }
@@ -310,32 +576,66 @@
 @media (max-width: 1024px) {
   .tiers-grid { grid-template-columns: repeat(3, 1fr); }
   .contract-grid { grid-template-columns: 1fr 1fr; }
+  .staking-stats-bar { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 18px; }
+  /* Row-aware dividers: reset every 3rd cell */
+  .staking-stat + .staking-stat { border-left: 1px solid var(--card-border); }
+  .staking-stat:nth-child(3n + 1) { border-left: none; }
 }
 @media (max-width: 768px) {
-  .staking-main { padding: 110px 0 72px; gap: 56px; }
+  .staking-main { padding: 104px 0 72px; gap: 56px; }
   .collection-feature { grid-template-columns: 1fr; gap: 28px; padding: 24px; }
   .collection-art-stack { min-height: 280px; max-width: 420px; width: 100%; margin: 0 auto; }
   .collection-art-stack img { width: min(70%, 240px); }
   .nft-marquee img { width: 118px; height: 118px; }
-  .staking-stats-bar { padding: 14px 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .staking-stat { align-items: flex-start; padding: 8px 0; }
-  .staking-stat-divider { display: none; }
+  .staking-stats-bar { padding: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
+  .staking-stat { padding: 0 10px; }
+  .staking-stat:nth-child(3n + 1) { border-left: 1px solid var(--card-border); }
+  .staking-stat:nth-child(2n + 1) { border-left: none; }
   .contract-grid { grid-template-columns: 1fr; }
   .tiers-grid { grid-template-columns: repeat(2, 1fr); }
   .readiness-section { grid-template-columns: 1fr; gap: 32px; }
+  .stake-summary { grid-template-columns: 1fr; gap: 20px; padding: 20px; }
   .nft-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .nav-wallet-area .wallet-network { display: none; }
   .connect-card { padding: 36px 24px; }
+
+  /* Keep the wallet control reachable on mobile (style.css hides .nav-cta) */
+  .staking-page .nav-cta { display: inline-flex !important; margin-left: 0; padding: 9px 16px; font-size: 13px; }
+  .staking-page .nav-inner { gap: 12px; }
+  .nav-wallet-area { gap: 8px; }
+  .wallet-chip-net { display: none; }
+
+  /* The staking navbar is taller than the marketing one, so anchor the
+     drop-down to the navbar itself instead of style.css's fixed top: 60px. */
+  .staking-page .navbar { position: fixed; }
+  .staking-page .nav-links.open {
+    position: absolute;
+    top: 100%; left: 0; right: 0;
+    margin-top: 1px;
+  }
+  .dashboard-toolbar { justify-content: stretch; }
+  .dashboard-tabs { flex: 1; }
+  .tab-btn { flex: 1; justify-content: center; }
 }
 @media (max-width: 480px) {
   .staking-hero h1 { letter-spacing: -1px; }
+  .staking-hero-chips { gap: 8px; }
+  .hero-chip { padding: 6px 11px; font-size: 11px; }
   .tiers-grid { grid-template-columns: 1fr; }
   .nft-grid { grid-template-columns: 1fr; }
   .staking-notice { padding: 16px; }
-  .claim-all-bar { flex-direction: column; align-items: flex-start; }
+  .stake-summary-grid { grid-template-columns: 1fr; gap: 12px; }
+  .lock-modal { padding: 12px; }
+  .lock-modal-card { padding: 24px 20px; max-height: calc(100vh - 24px); }
+  .lock-preview { grid-template-columns: 1fr; gap: 12px; }
+  .lock-modal-actions { flex-direction: column-reverse; }
+  .claim-all-bar { flex-direction: column; align-items: stretch; }
+  .claim-all-bar .btn { justify-content: center; }
+  .dashboard-toolbar { flex-direction: column; align-items: stretch; }
   .dashboard-tabs { width: 100%; }
-  .tab-btn { flex: 1; justify-content: center; }
+  .dashboard-refresh { width: 100%; justify-content: center; }
   .toast-container { left: 16px; right: 16px; width: auto; }
+  .staking-page .nav-cta { padding: 8px 13px; font-size: 12px; }
+  .wallet-chip-addr { padding: 7px 10px; font-size: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
