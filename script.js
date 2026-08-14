@@ -182,7 +182,7 @@ function setupCopyBtn(btnId, textId, iconId, value) {
   });
 }
 
-const CA = 'FWrMkspGpx5WgCoymgohtCU889dFsyXeEXZojqFCpump';
+const CA = '0xb5Ea549fc8Ad1665aCda9051e91aDe6A371B7BFf';
 setupCopyBtn('caCopy', 'caCopyText', 'caIcon', CA);
 
 /* --- data-copy generic (tokenomics CA) --- */
