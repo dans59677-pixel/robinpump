@@ -233,6 +233,22 @@ img { max-width: 100%; display: block; height: auto; }
   transition: var(--transition);
 }
 .nav-links a:hover { color: var(--green); }
+.nav-link-staking {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  color: var(--green) !important;
+  font-weight: 600 !important;
+}
+.staking-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  animation: livePulse 1.8s ease-in-out infinite;
+  flex-shrink: 0;
+}
 .nav-cta { margin-left: 12px; padding: 10px 20px; font-size: 14px; }
 .hamburger {
   display: none;

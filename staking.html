@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="RobinPump Green Flock NFT Staking — Stake your NFTs and earn $ROBINPUMP rewards on Robinhood Chain." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://robinpump.xyz/staking" />
+  <meta property="og:title" content="RobinPump — Green Flock NFT Staking" />
+  <meta property="og:description" content="Stake your Green Flock NFTs and earn $ROBINPUMP on Robinhood Chain." />
+  <meta property="og:url" content="https://robinpump.xyz/staking" />
+  <meta property="og:image" content="https://robinpump.xyz/logo.jpeg" />
+  <title>RobinPump — Green Flock Staking</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="staking.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+</head>
+<body class="staking-page">
+
+  <!-- NAV -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="RobinPump home">
+        <img src="logo.jpeg" alt="RobinPump logo" class="nav-logo-img" />
+        <span class="logo-text">ROBINPUMP</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#tokenomics">Tokenomics</a></li>
+        <li><a href="index.html#roadmap">Roadmap</a></li>
+        <li><a href="staking.html" class="nav-link-staking">
+          <span class="staking-dot" aria-hidden="true"></span>Staking
+        </a></li>
+      </ul>
+      <div class="nav-wallet-area">
+        <div class="wallet-info" id="walletInfo" hidden>
+          <div class="wallet-badge">
+            <span class="wallet-dot"></span>
+            <span id="walletShort">—</span>
+          </div>
+          <span class="wallet-network" id="walletNetwork">—</span>
+        </div>
+        <button type="button" class="btn btn-primary nav-cta" id="connectWalletNav">Connect Wallet</button>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- TOAST -->
+  <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="false"></div>
+
+  <main class="staking-main">
+
+    <!-- HERO -->
+    <section class="staking-hero container">
+      <p class="section-label">// GREEN FLOCK NFT STAKING</p>
+      <h1>Stake Your NFTs.<br /><span class="gradient-text">Earn $ROBINPUMP.</span></h1>
+      <p class="staking-lede">Connect your wallet to view your Green Flock NFTs on Robinhood Chain and earn $ROBINPUMP rewards.</p>
+
+      <!-- CONTRACT STATUS BANNER -->
+      <div class="staking-notice" id="stakingNotice" role="status">
+        <div class="notice-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div>
+          <strong id="stakingStatusText">Staking contract is not configured yet.</strong>
+          <p>Connect your wallet to detect your Green Flock NFTs on-chain. Staking, claims, and unstaking will be activated once the audited staking contract is deployed and configured.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS BAR -->
+    <section class="staking-stats-bar container" id="statsBar">
+      <div class="staking-stat">
+        <span class="staking-stat-label">Your NFTs</span>
+        <strong class="staking-stat-value" id="statYourNfts">—</strong>
+      </div>
+      <div class="staking-stat-divider"></div>
+      <div class="staking-stat">
+        <span class="staking-stat-label">NFTs Staked</span>
+        <strong class="staking-stat-value" id="statStaked">—</strong>
+      </div>
+      <div class="staking-stat-divider"></div>
+      <div class="staking-stat">
+        <span class="staking-stat-label">Daily Rewards</span>
+        <strong class="staking-stat-value" id="statDaily">—</strong>
+      </div>
+      <div class="staking-stat-divider"></div>
+      <div class="staking-stat">
+        <span class="staking-stat-label">Pending Rewards</span>
+        <strong class="staking-stat-value" id="statPending">—</strong>
+      </div>
+      <div class="staking-stat-divider"></div>
+      <div class="staking-stat">
+        <span class="staking-stat-label">$ROBINPUMP Balance</span>
+        <strong class="staking-stat-value" id="statBalance">—</strong>
+      </div>
+    </section>
+
+    <!-- WALLET CONNECT PROMPT -->
+    <section class="connect-prompt container" id="connectPrompt">
+      <div class="connect-card">
+        <div class="connect-icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <h2>Connect Your Wallet</h2>
+        <p>Connect an EVM-compatible wallet to detect your Green Flock NFTs on Robinhood Chain (Chain ID: 4663).</p>
+        <button type="button" class="btn btn-primary btn-lg" id="connectWalletMain">Connect Wallet</button>
+        <p class="connect-disclaimer">Your private keys and seed phrase are never requested or stored. Wallet connection is read-only until staking actions are initiated.</p>
+      </div>
+    </section>
+
+    <!-- WRONG NETWORK PROMPT -->
+    <section class="connect-prompt container" id="wrongNetworkPrompt" hidden>
+      <div class="connect-card connect-card--warning">
+        <div class="connect-icon connect-icon--warning" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <h2>Wrong Network</h2>
+        <p>Please switch to <strong>Robinhood Chain</strong> (Chain ID: 4663) to view your Green Flock NFTs and interact with the staking contract.</p>
+        <button type="button" class="btn btn-primary btn-lg" id="switchNetworkBtn">Switch to Robinhood Chain</button>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section class="staking-dashboard container" id="stakingDashboard" hidden>
+
+      <!-- REWARD RATES -->
+      <div class="rates-bar">
+        <span class="rates-label">Reward Rates:</span>
+        <span class="rate-chip rate-legendary">Legendary · 1,000/day</span>
+        <span class="rate-chip rate-epic">Epic · 333.33/day</span>
+        <span class="rate-chip rate-rare">Rare · 111.11/day</span>
+        <span class="rate-chip rate-uncommon">Uncommon · 37.04/day</span>
+        <span class="rate-chip rate-common">Common · 12.35/day</span>
+      </div>
+
+      <!-- LOADING STATE -->
+      <div class="nft-loading" id="nftLoading" hidden>
+        <div class="spinner" aria-hidden="true"></div>
+        <p id="nftLoadingText">Reading your NFTs from Robinhood Chain…</p>
+      </div>
+
+      <!-- RUNTIME STATUS -->
+      <p class="staking-runtime-status" id="runtimeStatus" role="status" hidden></p>
+
+      <!-- TABS -->
+      <div class="dashboard-tabs" id="dashboardTabs" hidden>
+        <button class="tab-btn tab-btn--active" data-tab="available">
+          My NFTs <span class="tab-count" id="tabCountAvailable">0</span>
+        </button>
+        <button class="tab-btn" data-tab="staked">
+          Staked <span class="tab-count" id="tabCountStaked">0</span>
+        </button>
+      </div>
+
+      <!-- NFT GRIDS -->
+      <div class="nft-grid" id="nftGridAvailable" aria-label="Available NFTs" aria-live="polite"></div>
+      <div class="nft-grid" id="nftGridStaked" aria-label="Staked NFTs" aria-live="polite" hidden></div>
+
+      <!-- EMPTY STATES -->
+      <div class="empty-state" id="emptyAvailable" hidden>
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        <p>No Green Flock NFTs found in this wallet.</p>
+      </div>
+      <div class="empty-state" id="emptyStaked" hidden>
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <p>No NFTs staked yet.</p>
+      </div>
+
+      <!-- CLAIM ALL -->
+      <div class="claim-all-bar" id="claimAllBar" hidden>
+        <div>
+          <span class="claim-all-label">Total Pending Rewards</span>
+          <strong class="claim-all-amount" id="claimAllAmount">0 ROBINPUMP</strong>
+        </div>
+        <button type="button" class="btn btn-primary" id="claimAllBtn" disabled aria-disabled="true">
+          Claim All Rewards
+        </button>
+      </div>
+
+    </section>
+
+    <!-- CONTRACT INFO -->
+    <section class="container contract-info-section">
+      <p class="section-label">// VERIFIED CONTRACTS</p>
+      <h2>On-Chain Configuration</h2>
+      <div class="contract-grid">
+        <div class="contract-card">
+          <p class="card-eyebrow">REWARD TOKEN</p>
+          <p class="contract-name">$ROBINPUMP</p>
+          <dl class="contract-meta">
+            <div><dt>Network</dt><dd>Robinhood Chain</dd></div>
+            <div><dt>Chain ID</dt><dd>4663</dd></div>
+            <div><dt>Standard</dt><dd>ERC-20</dd></div>
+            <div><dt>Decimals</dt><dd>18</dd></div>
+            <div><dt>Supply</dt><dd id="rewardSupply">—</dd></div>
+          </dl>
+          <div class="contract-address-row">
+            <code id="rewardAddress">0xb5Ea549fc8Ad1665aCda9051e91aDe6A371B7BFf</code>
+            <button type="button" class="copy-btn" data-copy="0xb5Ea549fc8Ad1665aCda9051e91aDe6A371B7BFf">Copy</button>
+            <a href="https://robinhoodchain.blockscout.com/token/0xb5Ea549fc8Ad1665aCda9051e91aDe6A371B7BFf" target="_blank" rel="noopener noreferrer" class="explorer-link">Explorer ↗</a>
+          </div>
+        </div>
+        <div class="contract-card">
+          <p class="card-eyebrow">NFT COLLECTION</p>
+          <p class="contract-name" id="collectionName">Green Flock</p>
+          <dl class="contract-meta">
+            <div><dt>Standard</dt><dd>ERC-721</dd></div>
+            <div><dt>Supply</dt><dd>3,333</dd></div>
+            <div><dt>Token IDs</dt><dd>1 – 3333</dd></div>
+            <div><dt>Status</dt><dd id="collectionStatus">Verifying…</dd></div>
+          </dl>
+          <div class="contract-address-row">
+            <code>0xbd00ce673b84be8022af8be0039c7a5af69724a9</code>
+            <button type="button" class="copy-btn" data-copy="0xbd00ce673b84be8022af8be0039c7a5af69724a9">Copy</button>
+            <a href="https://robinhoodchain.blockscout.com/token/0xbd00ce673b84be8022af8be0039c7a5af69724a9" target="_blank" rel="noopener noreferrer" class="explorer-link">Explorer ↗</a>
+          </div>
+        </div>
+        <div class="contract-card contract-card--disabled">
+          <p class="card-eyebrow">STAKING CONTRACT</p>
+          <p class="contract-name">Not Deployed</p>
+          <dl class="contract-meta">
+            <div><dt>Status</dt><dd class="status-pending-text">Pending deployment</dd></div>
+            <div><dt>Functions</dt><dd>stake / unstake / claim</dd></div>
+            <div><dt>Security</dt><dd>ReentrancyGuard + SafeERC20</dd></div>
+          </dl>
+          <p class="contract-disabled-note">Staking transactions will be enabled once the audited contract is deployed and verified. See <code>STAKING_DEPLOYMENT.md</code> for requirements.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- REWARD TIERS -->
+    <section class="container tiers-section">
+      <p class="section-label">// REWARD TIERS</p>
+      <h2>Rarity <span class="gradient-text">Reward Rates</span></h2>
+      <p class="tiers-note">Each NFT's tier is determined by on-chain metadata attributes. Reward rates are set in the staking contract and cannot be modified by the frontend.</p>
+      <div class="tiers-grid">
+        <div class="tier-card tier-legendary">
+          <div class="tier-badge">Legendary</div>
+          <div class="tier-rate">1,000</div>
+          <div class="tier-unit">$ROBINPUMP / day</div>
+          <div class="tier-formula">1000 / 3⁰</div>
+        </div>
+        <div class="tier-card tier-epic">
+          <div class="tier-badge">Epic</div>
+          <div class="tier-rate">333.333333</div>
+          <div class="tier-unit">$ROBINPUMP / day</div>
+          <div class="tier-formula">1000 / 3¹</div>
+        </div>
+        <div class="tier-card tier-rare">
+          <div class="tier-badge">Rare</div>
+          <div class="tier-rate">111.111111</div>
+          <div class="tier-unit">$ROBINPUMP / day</div>
+          <div class="tier-formula">1000 / 3²</div>
+        </div>
+        <div class="tier-card tier-uncommon">
+          <div class="tier-badge">Uncommon</div>
+          <div class="tier-rate">37.037037</div>
+          <div class="tier-unit">$ROBINPUMP / day</div>
+          <div class="tier-formula">1000 / 3³</div>
+        </div>
+        <div class="tier-card tier-common">
+          <div class="tier-badge">Common</div>
+          <div class="tier-rate">12.345679</div>
+          <div class="tier-unit">$ROBINPUMP / day</div>
+          <div class="tier-formula">1000 / 3⁴</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REQUIREMENTS -->
+    <section class="container readiness-section">
+      <div>
+        <p class="section-label">// BEFORE GO-LIVE</p>
+        <h2>Deployment Checklist</h2>
+        <p class="readiness-copy">All four requirements must be met before staking transactions are activated.</p>
+      </div>
+      <ol class="readiness-list">
+        <li>
+          <span>01</span>
+          <div>
+            <strong>Verify Green Flock Collection</strong>
+            <p>Confirm collection address, ERC-721 standard, metadata URI, and 1–3333 token inventory on Robinhood Chain.</p>
+          </div>
+        </li>
+        <li>
+          <span>02</span>
+          <div>
+            <strong>Publish Rarity Mapping</strong>
+            <p>Place token ID → tier on-chain or commit a final verified mapping before deployment. All 3333 IDs must be covered exactly once.</p>
+          </div>
+        </li>
+        <li>
+          <span>03</span>
+          <div>
+            <strong>Deploy & Audit Staking Contract</strong>
+            <p>Deploy contract with stake / unstake / claimReward / pendingReward. Use OpenZeppelin ReentrancyGuard + SafeERC20. Audit before mainnet.</p>
+          </div>
+        </li>
+        <li>
+          <span>04</span>
+          <div>
+            <strong>Fund Reward Vault</strong>
+            <p>Transfer $ROBINPUMP to the staking contract reward vault. Verify on-chain balance before opening staking to the public.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+  </main>
+
+  <footer class="staking-footer">
+    <div class="container">
+      <div class="footer-brand">
+        <img src="logo.jpeg" alt="RobinPump" class="footer-logo-img" />
+        <span class="logo-text">ROBINPUMP</span>
+      </div>
+      <p>Blockchain is the source of truth. No wallet signatures, approvals, or transactions are requested until the staking contract is deployed and configured.</p>
+      <p class="footer-disclaimer-small">RobinPump is an independent community meme coin. Not affiliated with Robinhood Markets, Inc. This is not financial advice.</p>
+    </div>
+  </footer>
+
+  <script src="staking-config.js"></script>
+  <script src="staking.js"></script>
+</body>
+</html>

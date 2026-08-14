@@ -1,0 +1,319 @@
+/* ===========================
+   ROBINPUMP — staking.css
+   =========================== */
+
+/* --- Page base --- */
+.staking-page {
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% -8%, rgba(0,255,136,.1), transparent 38%), var(--bg);
+}
+.staking-main { padding: 140px 0 100px; display: flex; flex-direction: column; gap: 80px; }
+
+/* --- Hero --- */
+.staking-hero { max-width: 860px; text-align: center; margin: 0 auto; }
+.staking-hero h1 { font-size: clamp(40px, 7vw, 78px); line-height: 1.05; letter-spacing: -2px; margin-bottom: 18px; }
+.staking-lede { font-size: clamp(16px, 2vw, 20px); color: var(--text-muted); max-width: 54ch; margin: 0 auto 32px; }
+
+/* --- Notice banner --- */
+.staking-notice {
+  display: flex; gap: 16px; text-align: left;
+  margin: 0 auto; padding: 20px 24px;
+  max-width: 760px;
+  border: 1px solid rgba(245,196,81,.35);
+  border-radius: var(--radius);
+  background: rgba(245,196,81,.05);
+}
+.staking-notice strong { color: #ffe29a; font-size: 15px; display: block; margin-bottom: 4px; }
+.staking-notice p { color: var(--text-muted); font-size: 14px; line-height: 1.6; margin: 0; }
+.notice-icon { flex-shrink: 0; color: #ffe29a; margin-top: 2px; }
+
+/* --- Navbar wallet area --- */
+.nav-wallet-area { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.wallet-info { display: flex; align-items: center; gap: 10px; }
+.wallet-badge {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: 50px; padding: 6px 14px;
+  font-family: var(--mono); font-size: 13px; color: var(--text);
+}
+.wallet-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); flex-shrink: 0; }
+.wallet-network { font-size: 12px; color: var(--text-muted); font-family: var(--mono); }
+
+/* --- Stats bar --- */
+.staking-stats-bar {
+  display: flex; align-items: center; justify-content: center; flex-wrap: wrap;
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 20px 32px; gap: 0;
+}
+.staking-stat { display: flex; flex-direction: column; align-items: center; padding: 0 28px; }
+.staking-stat-label { font-size: 11px; color: var(--text-muted); letter-spacing: .5px; text-transform: uppercase; font-family: var(--mono); }
+.staking-stat-value { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--green); margin-top: 4px; }
+.staking-stat-divider { width: 1px; height: 40px; background: var(--card-border); }
+
+/* --- Connect prompt --- */
+.connect-prompt { display: flex; justify-content: center; }
+.connect-card {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: 24px; padding: 56px 48px;
+  text-align: center; max-width: 520px; width: 100%;
+}
+.connect-card--warning { border-color: rgba(245,196,81,.35); background: rgba(245,196,81,.04); }
+.connect-icon {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: var(--green-dim); border: 1px solid var(--card-border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--green); margin: 0 auto 24px;
+}
+.connect-icon--warning { background: rgba(245,196,81,.1); border-color: rgba(245,196,81,.25); color: #ffe29a; }
+.connect-card h2 { font-size: 24px; margin-bottom: 12px; }
+.connect-card p { color: var(--text-muted); font-size: 15px; line-height: 1.7; margin-bottom: 28px; }
+.connect-disclaimer { font-size: 12px !important; color: var(--text-muted); opacity: .65; margin-top: 16px !important; margin-bottom: 0 !important; }
+
+/* --- Dashboard --- */
+.staking-dashboard { display: flex; flex-direction: column; gap: 24px; }
+
+/* --- Rates bar --- */
+.rates-bar {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  padding: 14px 20px; background: var(--card);
+  border: 1px solid var(--card-border); border-radius: var(--radius-sm);
+}
+.rates-label { font-family: var(--mono); font-size: 11px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-right: 4px; }
+.rate-chip {
+  padding: 4px 10px; border-radius: 50px;
+  font-family: var(--mono); font-size: 11px; font-weight: 700;
+}
+.rate-legendary { background: rgba(255,215,0,.12); border: 1px solid rgba(255,215,0,.3); color: #ffd700; }
+.rate-epic      { background: rgba(163,113,247,.12); border: 1px solid rgba(163,113,247,.3); color: #a371f7; }
+.rate-rare      { background: rgba(56,189,248,.12); border: 1px solid rgba(56,189,248,.3); color: #38bdf8; }
+.rate-uncommon  { background: rgba(74,222,128,.12); border: 1px solid rgba(74,222,128,.3); color: #4ade80; }
+.rate-common    { background: rgba(148,163,184,.12); border: 1px solid rgba(148,163,184,.3); color: #94a3b8; }
+
+/* --- Tabs --- */
+.dashboard-tabs { display: flex; gap: 4px; background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; padding: 4px; width: fit-content; }
+.tab-btn {
+  padding: 10px 20px; border-radius: 9px; border: none;
+  background: transparent; color: var(--text-muted);
+  font-family: var(--font); font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: var(--transition);
+  display: flex; align-items: center; gap: 8px;
+}
+.tab-btn--active { background: var(--green-dim); color: var(--green); }
+.tab-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 22px; height: 22px; padding: 0 6px;
+  background: var(--bg); border-radius: 50px;
+  font-family: var(--mono); font-size: 11px;
+}
+
+/* --- NFT Grid --- */
+.nft-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+.nft-card {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius); overflow: hidden;
+  transition: var(--transition);
+}
+.nft-card:hover { border-color: rgba(0,255,136,.3); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,255,136,.1); }
+.nft-card--staked { border-color: rgba(0,255,136,.25); }
+.nft-img-wrap { position: relative; }
+.nft-artwork { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--bg3); }
+.nft-artwork-fallback { display: grid; place-items: center; height: 180px; color: var(--text-muted); font: 12px/1.4 var(--mono); text-align: center; padding: 20px; }
+.nft-staked-badge {
+  position: absolute; top: 10px; right: 10px;
+  background: var(--green); color: #000;
+  font: 700 10px/1 var(--mono); letter-spacing: 1px;
+  padding: 4px 8px; border-radius: 4px;
+}
+.nft-card-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+.nft-tier-badge {
+  display: inline-block; padding: 3px 10px; border-radius: 50px;
+  font: 700 10px/1.4 var(--mono); letter-spacing: 1px;
+  text-transform: uppercase; width: fit-content; margin-bottom: 4px;
+}
+.nft-tier-badge.tier-legendary { background: rgba(255,215,0,.12); border: 1px solid rgba(255,215,0,.3); color: #ffd700; }
+.nft-tier-badge.tier-epic      { background: rgba(163,113,247,.12); border: 1px solid rgba(163,113,247,.3); color: #a371f7; }
+.nft-tier-badge.tier-rare      { background: rgba(56,189,248,.12); border: 1px solid rgba(56,189,248,.3); color: #38bdf8; }
+.nft-tier-badge.tier-uncommon  { background: rgba(74,222,128,.12); border: 1px solid rgba(74,222,128,.3); color: #4ade80; }
+.nft-tier-badge.tier-common    { background: rgba(148,163,184,.12); border: 1px solid rgba(148,163,184,.3); color: #94a3b8; }
+.nft-tier-badge.tier-unknown   { background: rgba(255,255,255,.06); border: 1px solid var(--card-border); color: var(--text-muted); }
+.nft-token-id { font: 700 11px/1 var(--mono); color: var(--green); letter-spacing: .08em; }
+.nft-card h3 { font-size: 15px; line-height: 1.3; overflow-wrap: anywhere; margin: 2px 0; }
+.nft-rate { font-size: 12px; color: var(--text-muted); font-family: var(--mono); margin-top: 4px; }
+.nft-pending {
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--green-dim); border-radius: 8px;
+  padding: 8px 12px; margin-top: 8px;
+}
+.nft-pending span { font-size: 11px; color: var(--text-muted); }
+.nft-pending strong { font-family: var(--mono); font-size: 13px; color: var(--green); }
+.nft-actions { display: flex; gap: 8px; margin-top: 12px; }
+.btn-sm { padding: 8px 14px !important; font-size: 13px !important; flex: 1; justify-content: center; }
+
+/* --- Empty states --- */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  padding: 64px 24px; text-align: center;
+  color: var(--text-muted);
+}
+.empty-state svg { opacity: .3; }
+
+/* --- Claim all bar --- */
+.claim-all-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px; background: var(--green-dim);
+  border: 1px solid var(--card-border); border-radius: var(--radius);
+  gap: 16px; flex-wrap: wrap;
+}
+.claim-all-label { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px; }
+.claim-all-amount { font-family: var(--mono); font-size: 20px; color: var(--green); font-weight: 700; }
+
+/* --- Loading spinner --- */
+.nft-loading { display: flex; align-items: center; gap: 16px; padding: 32px 0; }
+.nft-loading p { color: var(--text-muted); font-size: 14px; }
+.spinner {
+  width: 24px; height: 24px; flex-shrink: 0;
+  border: 2px solid var(--card-border);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+.spinner--sm { width: 16px; height: 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.staking-runtime-status { color: var(--text-muted); font-size: 14px; padding: 12px 16px; background: var(--card); border-radius: var(--radius-sm); border: 1px solid var(--card-border); }
+
+/* --- Contract info section --- */
+.contract-info-section h2 { font-size: clamp(28px, 4vw, 44px); margin-bottom: 28px; }
+.contract-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.contract-card {
+  padding: 28px; border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  background: linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+}
+.contract-card--disabled { opacity: .65; }
+.card-eyebrow { font: 700 11px/1 var(--mono); color: var(--green); letter-spacing: .12em; margin-bottom: 8px; }
+.contract-name { font-size: 22px; font-weight: 700; margin: 0 0 16px; }
+.contract-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.contract-meta dt { font-size: 11px; color: var(--text-muted); }
+.contract-meta dd { font-family: var(--mono); font-size: 13px; margin: 2px 0 0; overflow-wrap: anywhere; }
+.contract-address-row {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding-top: 16px; border-top: 1px solid var(--card-border);
+}
+.contract-address-row code { font-size: 11px; color: var(--text-muted); word-break: break-all; flex: 1; }
+.copy-btn {
+  padding: 5px 12px; border: 1px solid var(--card-border); border-radius: 7px;
+  background: transparent; color: var(--green); font-family: var(--font);
+  font-size: 12px; font-weight: 600; cursor: pointer; transition: var(--transition);
+  white-space: nowrap;
+}
+.copy-btn:hover { border-color: var(--green); background: var(--green-dim); }
+.explorer-link { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+.explorer-link:hover { color: var(--green); }
+.status-pending-text { color: #ffe29a; }
+.contract-disabled-note { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-top: 12px; }
+
+/* --- Tiers section --- */
+.tiers-section h2 { font-size: clamp(28px, 4vw, 44px); margin-bottom: 12px; }
+.tiers-note { color: var(--text-muted); font-size: 15px; margin-bottom: 32px; max-width: 60ch; }
+.tiers-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.tier-card {
+  padding: 24px 16px; border-radius: var(--radius);
+  border: 1px solid var(--card-border); text-align: center;
+  background: var(--card); transition: var(--transition);
+}
+.tier-card:hover { transform: translateY(-4px); }
+.tier-badge {
+  font: 700 11px/1 var(--mono); letter-spacing: 1px; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 50px; display: inline-block; margin-bottom: 16px;
+}
+.tier-rate { font-family: var(--mono); font-size: 22px; font-weight: 700; line-height: 1; }
+.tier-unit { font-size: 11px; color: var(--text-muted); margin: 6px 0 12px; }
+.tier-formula { font-family: var(--mono); font-size: 11px; color: var(--text-muted); opacity: .6; }
+.tier-legendary .tier-badge { background: rgba(255,215,0,.12); border: 1px solid rgba(255,215,0,.3); color: #ffd700; }
+.tier-legendary .tier-rate  { color: #ffd700; }
+.tier-epic .tier-badge      { background: rgba(163,113,247,.12); border: 1px solid rgba(163,113,247,.3); color: #a371f7; }
+.tier-epic .tier-rate       { color: #a371f7; }
+.tier-rare .tier-badge      { background: rgba(56,189,248,.12); border: 1px solid rgba(56,189,248,.3); color: #38bdf8; }
+.tier-rare .tier-rate       { color: #38bdf8; }
+.tier-uncommon .tier-badge  { background: rgba(74,222,128,.12); border: 1px solid rgba(74,222,128,.3); color: #4ade80; }
+.tier-uncommon .tier-rate   { color: #4ade80; }
+.tier-common .tier-badge    { background: rgba(148,163,184,.12); border: 1px solid rgba(148,163,184,.3); color: #94a3b8; }
+.tier-common .tier-rate     { color: #94a3b8; }
+
+/* --- Readiness checklist --- */
+.readiness-section {
+  display: grid; grid-template-columns: .8fr 1.2fr; gap: 80px;
+}
+.readiness-section h2 { font-size: clamp(28px, 4vw, 44px); margin: 8px 0; }
+.readiness-copy { color: var(--text-muted); margin-top: 16px; max-width: 38ch; font-size: 15px; }
+.readiness-list { list-style: none; }
+.readiness-list li { display: grid; grid-template-columns: 48px 1fr; gap: 16px; padding: 21px 0; border-top: 1px solid var(--card-border); }
+.readiness-list li:last-child { border-bottom: 1px solid var(--card-border); }
+.readiness-list span { color: var(--green); font: 700 13px/1.3 var(--mono); padding-top: 2px; }
+.readiness-list strong { font-size: 16px; }
+.readiness-list p { color: var(--text-muted); font-size: 14px; margin-top: 4px; line-height: 1.6; }
+
+/* --- Toast --- */
+.toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 999; display: flex; flex-direction: column; gap: 10px; width: 360px; max-width: calc(100vw - 32px); }
+.toast {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 16px; border-radius: var(--radius-sm);
+  border: 1px solid var(--card-border); background: #111a11;
+  box-shadow: 0 8px 32px rgba(0,0,0,.6);
+  animation: slideIn .25s ease;
+}
+@keyframes slideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.toast--success { border-color: rgba(0,255,136,.3); }
+.toast--error   { border-color: rgba(239,68,68,.3); }
+.toast--loading { border-color: rgba(0,255,136,.2); }
+.toast-icon { flex-shrink: 0; margin-top: 1px; }
+.toast--success .toast-icon { color: var(--green); }
+.toast--error   .toast-icon { color: #ef4444; }
+.toast--info    .toast-icon { color: var(--text-muted); }
+.toast-body { flex: 1; min-width: 0; }
+.toast-body strong { display: block; font-size: 14px; margin-bottom: 2px; }
+.toast-body p { font-size: 13px; color: var(--text-muted); margin: 0; }
+.toast-tx { display: block; font-size: 12px; color: var(--green); margin-top: 6px; font-family: var(--mono); }
+.toast-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; padding: 0; flex-shrink: 0; }
+
+/* --- Footer --- */
+.staking-footer { padding: 40px 0; border-top: 1px solid var(--card-border); }
+.staking-footer .container { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.staking-footer p { color: var(--text-muted); font-size: 13px; max-width: 60ch; }
+.footer-disclaimer-small { font-size: 11px; opacity: .5; }
+
+/* --- Responsive --- */
+@media (max-width: 1024px) {
+  .tiers-grid { grid-template-columns: repeat(3, 1fr); }
+  .contract-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .staking-main { padding: 110px 0 72px; gap: 56px; }
+  .staking-stats-bar { padding: 14px 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .staking-stat { align-items: flex-start; padding: 8px 0; }
+  .staking-stat-divider { display: none; }
+  .contract-grid { grid-template-columns: 1fr; }
+  .tiers-grid { grid-template-columns: repeat(2, 1fr); }
+  .readiness-section { grid-template-columns: 1fr; gap: 32px; }
+  .nft-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nav-wallet-area .wallet-network { display: none; }
+  .connect-card { padding: 36px 24px; }
+}
+@media (max-width: 480px) {
+  .staking-hero h1 { letter-spacing: -1px; }
+  .tiers-grid { grid-template-columns: 1fr; }
+  .nft-grid { grid-template-columns: 1fr; }
+  .staking-notice { padding: 16px; }
+  .claim-all-bar { flex-direction: column; align-items: flex-start; }
+  .dashboard-tabs { width: 100%; }
+  .tab-btn { flex: 1; justify-content: center; }
+  .toast-container { left: 16px; right: 16px; width: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
