@@ -88,7 +88,21 @@ window.RobinPumpStakingConfig = Object.freeze({
      * so the UI must read it and cap what it advertises as claimable.
      */
     'rewardTokenBalance()',
-    'owedRewards(address)'
+    'owedRewards(address)',
+    /*
+     * Rarity gate. _stake() reverts with TierNotConfigured(tokenId) when
+     * _tierPlusOne[tokenId] == 0, and that revert happens BEFORE the NFT
+     * transfer, so nothing can get stuck. The real cost to a holder is the
+     * approve() transaction that ensureApproval() sends first: that one
+     * succeeds and burns gas, then stake() reverts.
+     *
+     * Both of these are `view`, so reading them is a free eth_call with no
+     * transaction. The UI reads them per refresh and disables Stake for any
+     * id whose tier has not been written yet, so no holder ever pays approve
+     * gas for a stake that cannot succeed.
+     */
+    'unconfiguredTokenIds(uint256[])',
+    'isTierConfigured(uint256)'
   ]),
   // Intentionally null: do not invent a transaction target.
   stakingContract: null,

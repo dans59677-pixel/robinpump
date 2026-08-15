@@ -269,6 +269,14 @@
 }
 .nft-pending span { font-size: 11px; color: var(--text-muted); }
 .nft-pending strong { font-family: var(--mono); font-size: 13px; color: var(--green); }
+/* Explains why a card has no Stake button: rarity tier not yet written
+   on-chain. Muted rather than red — nothing is wrong or lost. */
+.nft-pending-note {
+  font-size: 11px; line-height: 1.5; color: var(--text-muted);
+  background: rgba(255,255,255,.04);
+  border: 1px dashed var(--card-border); border-radius: 8px;
+  padding: 8px 10px; margin-top: 8px;
+}
 .nft-actions { display: flex; gap: 8px; margin-top: 12px; }
 .btn-sm { padding: 8px 14px !important; font-size: 13px !important; flex: 1; justify-content: center; }
 

@@ -86,6 +86,37 @@ let rewardPoolBalance = null;
 // settlement time. Withdrawn separately via claimOwed().
 let owedRewards = 0n;
 
+/*
+ * Rarity gate awareness.
+ *
+ * _stake() reads _tierPlusOne[tokenId] and reverts with
+ * TierNotConfigured(tokenId) when it is still 0. That revert happens before the
+ * NFT is transferred, so an unconfigured id can never be stranded in the
+ * contract — but ensureApproval() sends approve() first, and that transaction
+ * succeeds and costs real gas before the doomed stake() is even attempted.
+ *
+ * unconfiguredTokenIds(uint256[]) is a view, so asking the chain which of the
+ * wallet's ids are still unwritten is a free eth_call. Holding the answer here
+ * lets the card disable Stake up front, so nobody pays approve gas for a stake
+ * that cannot succeed.
+ *
+ * `null` means "not read yet" and is deliberately distinct from an empty Set
+ * ("read, and every id is configured"): an unread gate must never be rendered
+ * as a blocker.
+ */
+let unconfiguredIds = null;
+
+// True only when the chain has been asked and answered.
+function tierGateKnown() {
+  return unconfiguredIds instanceof Set;
+}
+
+// Unknown gate → not blocked. The contract still refuses the stake, and
+// REVERT_MESSAGES renders TierNotConfigured in plain language if it happens.
+function isTierPending(tokenId) {
+  return tierGateKnown() && unconfiguredIds.has(String(tokenId));
+}
+
 // One wallet transaction at a time — prevents double-spend clicks and
 // overlapping approve/stake sequences.
 let txPending = false;
@@ -331,7 +362,13 @@ const SEL = Object.freeze({
   claimableRewardOf:  selector('claimableRewardOf(address)'),
   lockBounds:         selector('lockBounds()'),
   rewardTokenBalance: selector('rewardTokenBalance()'),
-  owedRewards:        selector('owedRewards(address)')
+  owedRewards:        selector('owedRewards(address)'),
+  /*
+   * Returns the subset of the given ids whose tier has not been written yet.
+   * A view, so this costs nothing — and it is the only way for the UI to know
+   * which ids stake() would reject before the holder spends approve gas.
+   */
+  unconfiguredTokenIds: selector('unconfiguredTokenIds(uint256[])')
 });
 
 // ── ABI encode / decode ───────────────────────────────────────────────────────
@@ -645,6 +682,47 @@ async function readStakingState(owner) {
   return { records };
 }
 
+/*
+ * Which of these ids does the contract still refuse to stake?
+ *
+ * unconfiguredTokenIds(uint256[]) is a view, so this is an eth_call: no
+ * transaction, no gas, nothing signed. Only the unstaked ids are worth asking
+ * about — an already-staked id proves its tier was written.
+ *
+ * Chunked because the argument is unbounded calldata and public RPCs cap
+ * request size. The view itself has no MAX_BATCH_SIZE check (that guard is on
+ * the write paths), so the limit here is purely about the transport.
+ *
+ * Returns null on any failure, which is the "not read yet" signal: a gate the
+ * chain never answered must not disable a button. The contract still rejects
+ * the stake, and REVERT_MESSAGES explains why in plain language.
+ */
+const TIER_GATE_CHUNK = 200;
+
+async function readTierGate(tokenIds) {
+  if (!STAKING_ACTIVE || !CFG.stakingContract) return null;
+  if (!tokenIds.length) return new Set();
+
+  const staking = CFG.stakingContract;
+  const chunks = [];
+  for (let i = 0; i < tokenIds.length; i += TIER_GATE_CHUNK) {
+    chunks.push(tokenIds.slice(i, i + TIER_GATE_CHUNK));
+  }
+
+  const results = await Promise.all(
+    chunks.map(group =>
+      call(staking, `${SEL.unconfiguredTokenIds}${encodeUintArray(group)}`).catch(() => null))
+  );
+
+  // Partial answers are discarded: a half-read gate would mark configured ids
+  // as pending and hide the Stake button from holders who could actually stake.
+  if (results.some(r => !r || r === '0x')) return null;
+
+  const pending = new Set();
+  results.forEach(raw => decodeUintArray(raw).forEach(id => pending.add(id.toString())));
+  return pending;
+}
+
 // ── Live reward maths (mirrors _pending in RobinPumpNFTStaking.sol) ───────────
 // Solidity: (rewardPerDay[tier] * (block.timestamp - lastClaimAt)) / 1 days
 //
@@ -834,9 +912,21 @@ function buildNftCard(nft, staked = false) {
   const body = document.createElement('div');
   body.className = 'nft-card-body';
 
+  /*
+   * Is this id's tier still missing on-chain? Only meaningful for unstaked ids
+   * (a staked id proves its tier exists) and only when the gate was actually
+   * read — an unread gate must not label a card as blocked.
+   */
+  const tierPending = !staked && isTierPending(tokenId);
+
   const tierBadge = document.createElement('span');
   tierBadge.className = `nft-tier-badge ${tierCfg ? tierCfg.cssClass : 'tier-unknown'}`;
-  tierBadge.textContent = tierCfg ? tierCfg.label : 'Tier unknown';
+  // "Tier unknown" reads as a UI gap; "Rarity pending" states the actual reason
+  // the card cannot be staked, so holders can tell the two situations apart.
+  tierBadge.textContent = tierPending ? 'Rarity pending' : (tierCfg ? tierCfg.label : 'Tier unknown');
+  if (tierPending) {
+    tierBadge.title = 'The on-chain rarity tier for this NFT has not been written yet.';
+  }
   body.appendChild(tierBadge);
 
   const idLabel = document.createElement('p');
@@ -850,9 +940,13 @@ function buildNftCard(nft, staked = false) {
 
   const rateEl = document.createElement('p');
   rateEl.className = 'nft-rate';
-  rateEl.textContent = tierCfg
-    ? `${tierCfg.ratePerDay.toLocaleString(undefined, { maximumFractionDigits: 6 })} $ROBINPUMP / day`
-    : 'Rate: requires staking contract';
+  if (tierPending) {
+    rateEl.textContent = 'Rate: set once rarity is written on-chain';
+  } else {
+    rateEl.textContent = tierCfg
+      ? `${tierCfg.ratePerDay.toLocaleString(undefined, { maximumFractionDigits: 6 })} $ROBINPUMP / day`
+      : 'Rate: requires staking contract';
+  }
   body.appendChild(rateEl);
 
   if (staked) {
@@ -923,6 +1017,27 @@ function buildNftCard(nft, staked = false) {
     unstakeBtn.dataset.action = 'unstake';
     unstakeBtn.dataset.tokenId = tokenId;
     actions.append(claimBtn, unstakeBtn);
+  } else if (tierPending) {
+    /*
+     * The chain says this id has no tier, so stake() would revert with
+     * TierNotConfigured. Offering the button anyway would cost the holder a
+     * successful approve() transaction — ensureApproval() runs first — for a
+     * stake that cannot land. So the button is disabled before any gas is
+     * spent, and the card says why.
+     */
+    const disabledBtn = document.createElement('button');
+    disabledBtn.type = 'button';
+    disabledBtn.className = 'btn btn-outline btn-sm';
+    disabledBtn.disabled = true;
+    disabledBtn.setAttribute('aria-disabled', 'true');
+    disabledBtn.textContent = 'Rarity pending';
+    disabledBtn.title = 'Staking unlocks for this NFT once its rarity tier is written on-chain. No gas is spent trying.';
+    actions.appendChild(disabledBtn);
+
+    const note = document.createElement('p');
+    note.className = 'nft-pending-note';
+    note.textContent = 'Rarity for this token ID has not been written on-chain yet, so staking would be rejected. Nothing is lost — check back after the rarity rollout.';
+    body.appendChild(note);
   } else {
     const stakeBtn = document.createElement('button');
     stakeBtn.type = 'button';
@@ -1250,6 +1365,16 @@ async function refreshState() {
     const walletIds = new Set(tokenIds);
     const allIds = [...tokenIds, ...[...stakedRecords.keys()].filter(id => !walletIds.has(id))];
 
+    /*
+     * Ask the chain which of the wallet's unstaked ids still have no tier. Free
+     * (a view), and it must happen before any card renders a Stake button:
+     * clicking Stake runs ensureApproval() first, and that approve costs real
+     * gas even though the stake that follows would revert with
+     * TierNotConfigured. Staked ids are skipped — being staked proves the tier
+     * was written.
+     */
+    unconfiguredIds = await readTierGate(tokenIds.filter(id => !stakedRecords.has(id)));
+
     setBusy(true, `Loading metadata for ${allIds.length} NFT${allIds.length !== 1 ? 's' : ''}…`);
     nftData = await Promise.all(
       allIds.map(async tokenId => {
@@ -1343,6 +1468,9 @@ function resetState() {
   // Back to "not read yet" — not 0n, which would render as an empty pool.
   rewardPoolBalance = null;
   owedRewards = 0n;
+  // Same reasoning: null is "never asked", not "every id is configured". The
+  // next wallet must not inherit this wallet's rarity gate.
+  unconfiguredIds = null;
   hide('stakeSummary');
   hide('owedRewardsRow');
   hide('rewardPoolNotice');
@@ -1522,6 +1650,17 @@ async function ensureApproval(tokenId) {
 // ── Actions ────────────────────────────────────────────────────────────────────
 function handleStake(tokenId) {
   if (!DEMO_MODE && !requireStakingActive()) return;
+  /*
+   * Defence in depth. buildNftCard already renders a disabled button for ids
+   * with no tier, but a card rendered before the gate was read stays on screen
+   * until the next refresh. Stopping here keeps ensureApproval() — and its real
+   * approve() gas — out of reach for a stake the contract would reject.
+   */
+  if (!DEMO_MODE && isTierPending(tokenId)) {
+    toast('info', 'Rarity not written yet.',
+      `#${tokenId} has no on-chain rarity tier, so staking would be rejected. No gas was spent.`);
+    return;
+  }
   openLockModal(tokenId);
 }
 
