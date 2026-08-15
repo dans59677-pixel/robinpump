@@ -17,6 +17,7 @@
 import hre from 'hardhat';
 import * as fs from 'fs';
 import * as path from 'path';
+import type { ContractTransactionReceipt, ContractTransactionResponse } from 'ethers';
 import {
   MAX_BATCH_SIZE,
   MAX_TOKEN_ID,
@@ -78,8 +79,10 @@ function parseCsv(file: string): ParsedRow[] {
     }
 
     const idRaw = parts[0].trim();
-    // Skip an optional header row.
-    if (lineNo <= 5 && /^tokenid$/i.test(idRaw)) return;
+    // Skip an optional header row. Not tied to a line number: the generated CSV
+    // carries a provenance comment block, so the header can sit well below the
+    // top of the file. "tokenId" is never a valid id, so this cannot mask data.
+    if (/^tokenid$/i.test(idRaw)) return;
 
     if (!/^\d+$/.test(idRaw)) {
       errors.push(`line ${lineNo}: tokenId "${idRaw}" is not a non-negative integer`);
@@ -116,6 +119,40 @@ function parseCsv(file: string): ParsedRow[] {
   }
 
   return rows;
+}
+
+/** Concurrent eth_call fan-out while probing. Kept low: the RPC throttles bursts. */
+const PROBE_CONCURRENCY = 5;
+/** Breather between write transactions, for the same reason. */
+const BATCH_PAUSE_MS = 250;
+
+const RATE_LIMITED = /too many requests|rate limit|rate-limit|429|-32005/i;
+
+function isRateLimit(err: unknown): boolean {
+  const message = err instanceof Error ? err.message : String(err);
+  return RATE_LIMITED.test(message);
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Retry ONLY on rate-limit errors, with exponential backoff. Anything else — a
+ * revert, a nonce problem, a wrong signer — is a real failure and must surface
+ * immediately instead of being retried blindly against a live contract.
+ */
+async function withRetry<T>(label: string, fn: () => Promise<T>, attempts = 6): Promise<T> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (attempt >= attempts || !isRateLimit(err)) throw err;
+      const waitMs = Math.min(30_000, 1_000 * 2 ** (attempt - 1));
+      console.log(`    rate limited on ${label}; retrying in ${waitMs} ms (${attempt}/${attempts - 1})`);
+      await sleep(waitMs);
+    }
+  }
 }
 
 async function main(): Promise<void> {
@@ -170,18 +207,34 @@ async function main(): Promise<void> {
 
   // ── Skip ids that already hold the intended tier ──────────────────────────
   step('Checking which ids still need writing');
+  const alreadyConfigured = Number(
+    await withRetry('configuredCount()', () => staking.configuredCount())
+  );
+  detail('configuredCount', `${alreadyConfigured} / ${TOTAL_SUPPLY}`);
+
   const pending: ParsedRow[] = [];
-  for (const group of chunk(rows, 200)) {
-    const results = await Promise.all(
-      group.map(async row => {
-        const configured: boolean = await staking.isTierConfigured(row.tokenId);
-        if (!configured) return row;
-        const current = Number(await staking.tokenTier(row.tokenId));
-        return current === row.tier ? null : row;
-      })
-    );
-    for (const row of results) {
-      if (row) pending.push(row);
+  if (alreadyConfigured === 0) {
+    // No tier exists on-chain yet, so every CSV row is pending by definition.
+    // Skipping the per-id probe avoids TOTAL_SUPPLY eth_call round trips that
+    // the RPC would throttle, and cannot hide work: setTokenTiers() is the only
+    // way _tierPlusOne becomes non-zero.
+    pending.push(...rows);
+    detail('per-id probe', 'skipped (nothing configured yet)');
+  } else {
+    for (const group of chunk(rows, PROBE_CONCURRENCY)) {
+      const results = await Promise.all(
+        group.map(row =>
+          withRetry(`probe id ${row.tokenId}`, async () => {
+            const configured: boolean = await staking.isTierConfigured(row.tokenId);
+            if (!configured) return row;
+            const current = Number(await staking.tokenTier(row.tokenId));
+            return current === row.tier ? null : row;
+          })
+        )
+      );
+      for (const row of results) {
+        if (row) pending.push(row);
+      }
     }
   }
   detail('already correct', rows.length - pending.length);
@@ -202,8 +255,13 @@ async function main(): Promise<void> {
     const ids = batch.map(r => r.tokenId);
     const tiers = batch.map(r => r.tier);
 
-    const tx = await staking.setTokenTiers(ids, tiers);
-    const receipt = await tx.wait();
+    const tx: ContractTransactionResponse = await withRetry(`batch ${i + 1} submit`, () =>
+      staking.setTokenTiers(ids, tiers)
+    );
+    const receipt: ContractTransactionReceipt | null = await withRetry(
+      `batch ${i + 1} receipt`,
+      () => tx.wait()
+    );
     if (!receipt || receipt.status !== 1) {
       fail(`Batch ${i + 1}/${batches.length} reverted (tx ${tx.hash}). Re-run to resume.`);
     }
@@ -212,23 +270,30 @@ async function main(): Promise<void> {
       `    batch ${String(i + 1).padStart(String(batches.length).length)}/${batches.length}  ` +
         `ids ${ids[0]}..${ids[ids.length - 1]}  ${sent}/${pending.length} written  tx ${tx.hash}`
     );
+    if (i + 1 < batches.length) await sleep(BATCH_PAUSE_MS);
   }
 
   // ── Verify ────────────────────────────────────────────────────────────────
   step('Verifying on-chain state');
-  const configuredCount = Number(await staking.configuredCount());
+  const configuredCount = Number(
+    await withRetry('configuredCount()', () => staking.configuredCount())
+  );
   detail('configuredCount', `${configuredCount} / ${TOTAL_SUPPLY}`);
 
   const sample = pending.slice(0, Math.min(pending.length, 10));
   for (const row of sample) {
-    const onChain = Number(await staking.tokenTier(row.tokenId));
+    const onChain = Number(
+      await withRetry(`tokenTier(${row.tokenId})`, () => staking.tokenTier(row.tokenId))
+    );
     if (onChain !== row.tier) {
       fail(`tokenId ${row.tokenId} reads tier ${onChain}, expected ${row.tier}.`);
     }
   }
   detail('sampled ids match', `${sample.length}/${sample.length}`);
 
-  const tierCounts: bigint[] = [...(await staking.getTierCounts())];
+  const tierCounts: bigint[] = [
+    ...(await withRetry('getTierCounts()', () => staking.getTierCounts()))
+  ];
   TIER_NAMES.forEach((name, tier) => detail(`on-chain tier ${tier} ${name}`, tierCounts[tier].toString()));
 
   if (configuredCount === TOTAL_SUPPLY) {
