@@ -1,0 +1,22 @@
+# RobinPump Green Flock -> tier mapping template
+#
+# Copy this file to config/token-tiers.csv and fill in ALL 3333 rows before
+# running `npm run configure:tiers:csv` and `npm run lock:rarity`.
+#
+# Rules enforced by scripts/configure-tiers-from-csv.ts:
+#   - tokenId must be an integer in [1, 3333]
+#   - tier must be one of: 0 = Legendary, 1 = Epic, 2 = Rare, 3 = Uncommon, 4 = Common
+#     (the tier NAME is also accepted, case-insensitive)
+#   - duplicate tokenId rows are rejected
+#   - rows with a missing or unknown tier are rejected, NOT guessed
+#   - lockRarity() will revert with RarityIncomplete() until all 3333 ids are set
+#
+# Lines starting with '#' and blank lines are ignored.
+# The header row below is optional but recommended.
+tokenId,tier
+1,0
+2,1
+3,2
+4,3
+5,4
+# ... continue through 3333

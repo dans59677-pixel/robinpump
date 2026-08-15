@@ -1,0 +1,18 @@
+# Secrets
+.env
+*.key
+*.pem
+pk.txt
+
+# Node / Hardhat build output
+node_modules/
+artifacts/
+cache/
+typechain-types/
+dist/
+coverage/
+coverage.json
+
+# Deployment records are intentionally COMMITTED (deployments/*.json) so the
+# real deployed address and tx hash stay in version control. Nothing secret
+# is written there.

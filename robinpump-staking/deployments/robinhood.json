@@ -1,0 +1,47 @@
+{
+  "contractName": "RobinPumpNFTStaking",
+  "network": "robinhood",
+  "chainId": 4663,
+  "address": "0xc00C22Fe0955E4AB847CC7d9d4dAC37a4b28f609",
+  "deployer": "0xAd79908AC864D9789d539b9Eb15261Ebf0d361E2",
+  "owner": "0xAd79908AC864D9789d539b9Eb15261Ebf0d361E2",
+  "nftContract": "0xbD00CE673B84bE8022Af8be0039C7A5AF69724A9",
+  "rewardToken": "0xb5Ea549fc8Ad1665aCda9051e91aDe6A371B7BFf",
+  "rewardTokenDecimals": 18,
+  "rewardPerDayBaseUnits": [
+    "1000000000000000000000",
+    "333333333000000000000",
+    "111111111000000000000",
+    "37037037000000000000",
+    "12345679000000000000"
+  ],
+  "rewardPerDayHuman": [
+    "1000.0",
+    "333.333333",
+    "111.111111",
+    "37.037037",
+    "12.345679"
+  ],
+  "transactionHash": "0x9687344fa2d0908f98561a41873c3ca8b959c83ef40109629a6068aa08412b56",
+  "blockNumber": 36293467,
+  "deployedAt": "2026-08-14T13:36:30.575Z",
+  "constructorArgs": [
+    "0xbD00CE673B84bE8022Af8be0039C7A5AF69724A9",
+    "0xb5Ea549fc8Ad1665aCda9051e91aDe6A371B7BFf",
+    "0xAd79908AC864D9789d539b9Eb15261Ebf0d361E2",
+    [
+      "1000000000000000000000",
+      "333333333000000000000",
+      "111111111000000000000",
+      "37037037000000000000",
+      "12345679000000000000"
+    ]
+  ],
+  "explorerUrl": "https://robinhoodchain.blockscout.com/address/0xc00C22Fe0955E4AB847CC7d9d4dAC37a4b28f609",
+  "compiler": {
+    "version": "0.8.24",
+    "optimizer": true,
+    "runs": 200,
+    "evmVersion": "paris"
+  }
+}

@@ -1,2 +1,21 @@
 .env
 .vscode/
+
+# --- Secrets: never commit key material ---------------------------------------
+pk.txt
+*.key
+*.pem
+keystore/
+
+# --- Node / Hardhat -----------------------------------------------------------
+node_modules/
+robinpump-staking/node_modules/
+robinpump-staking/artifacts/
+robinpump-staking/cache/
+robinpump-staking/typechain-types/
+robinpump-staking/.env
+robinpump-staking/coverage/
+robinpump-staking/coverage.json
+
+# --- Scratch ------------------------------------------------------------------
+tmp-*.js

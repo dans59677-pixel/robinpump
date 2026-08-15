@@ -27,6 +27,10 @@ if (!CFG) {
 const EXPLORER = CFG.network.explorerUrl;
 const TOKEN_DECIMALS = CFG.rewardToken.decimals;
 const DAY_SECONDS = 86_400;
+// Mirrors TIER_COUNT in RobinPumpNFTStaking.sol (0 = Legendary … 4 = Common).
+const TIER_COUNT = 5;
+// Mirrors MAX_BATCH_SIZE — any longer array argument reverts on-chain.
+const MAX_BATCH_SIZE = 50;
 // Both gates must be satisfied before any transaction path is exposed.
 const STAKING_ACTIVE = !!(CFG.enabled && CFG.stakingContract);
 
@@ -95,7 +99,19 @@ const TIER_CONFIG = Object.freeze({
   COMMON:    { label: 'Common',    ratePerDay: 12.345679,  cssClass: 'tier-common',    rewardBasis: 81 }
 });
 
+// Reward per day per tier, in reward-token base units, indexed by tier number.
+// Seeded from the display table so the first paint is not blank; overwritten by
+// rewardPerDay(uint256) on read — the contract is the only authority.
+let tierRatePerDay = Object.values(TIER_CONFIG).map(t => toBaseUnits(t.ratePerDay));
+
 // ── Utilities ─────────────────────────────────────────────────────────────────
+// Decimal string/number → base units without ever going through a float.
+function toBaseUnits(amount) {
+  const [whole, frac = ''] = String(amount).split('.');
+  const padded = (frac + '0'.repeat(TOKEN_DECIMALS)).slice(0, TOKEN_DECIMALS);
+  return BigInt((whole || '0') + padded);
+}
+
 function formatUnits(value, decimals, maxFrac = 6) {
   try {
     const base = 10n ** BigInt(decimals);
@@ -275,25 +291,36 @@ function selector(signature) {
   return `0x${keccak256Hex(signature).slice(0, 8)}`;
 }
 
+// Every signature here is taken verbatim from
+// robinpump-staking/frontend-abi/RobinPumpNFTStaking.json. A single character of
+// drift changes the selector, and the transaction would revert on-chain.
 const SEL = Object.freeze({
   // ERC-721 (collection)
-  getApproved:      selector('getApproved(uint256)'),
-  approve:          selector('approve(address,uint256)'),
-  isApprovedForAll: selector('isApprovedForAll(address,address)'),
-  // Staking contract
-  stake:            selector('stake(uint256,uint256)'),
-  unstake:          selector('unstake(uint256)'),
-  claimReward:      selector('claimReward(uint256)'),
-  claimAllRewards:  selector('claimAllRewards()'),
-  stakedTokenIds:   selector('stakedTokenIds(address)'),
-  stakeDetails:     selector('stakeDetails(uint256)'),
-  rewardRateOf:     selector('rewardRateOf(address)'),
-  lockBounds:       selector('lockBounds()')
+  getApproved:        selector('getApproved(uint256)'),
+  approve:            selector('approve(address,uint256)'),
+  isApprovedForAll:   selector('isApprovedForAll(address,address)'),
+  // Staking contract — writes
+  stake:              selector('stake(uint256,uint256)'),
+  unstake:            selector('unstake(uint256)'),
+  claim:              selector('claim(uint256)'),
+  claimBatch:         selector('claimBatch(uint256[])'),
+  // Staking contract — reads
+  getStakedTokenIds:  selector('getStakedTokenIds(address)'),
+  getStakeInfo:       selector('getStakeInfo(uint256)'),
+  rewardPerDay:       selector('rewardPerDay(uint256)'),
+  rewardRateOf:       selector('rewardRateOf(address)'),
+  claimableRewardOf:  selector('claimableRewardOf(address)'),
+  lockBounds:         selector('lockBounds()')
 });
 
 // ── ABI encode / decode ───────────────────────────────────────────────────────
 function encodeUint(value) {
   return BigInt(value).toString(16).padStart(64, '0');
+}
+
+// Encodes a single top-level uint256[] argument: head offset, length, elements.
+function encodeUintArray(values) {
+  return encodeUint(32) + encodeUint(values.length) + values.map(encodeUint).join('');
 }
 
 function wordAt(data, index) {
@@ -397,11 +424,13 @@ async function ensureRobinhoodChain() {
     await rpc('wallet_switchEthereumChain', [{ chainId: CFG.network.chainIdHex }]);
   } catch (err) {
     if (err.code !== 4902) throw err;
+    // The wallet tries rpcUrls in order, so the whole public list is passed
+    // through. Wallets reject the call outright if the array is empty.
     await rpc('wallet_addEthereumChain', [{
       chainId: CFG.network.chainIdHex,
       chainName: CFG.network.label,
       nativeCurrency: { name: 'Ether', symbol: CFG.network.currencySymbol, decimals: 18 },
-      rpcUrls: [CFG.network.rpcUrl],
+      rpcUrls: [...CFG.network.rpcUrls],
       blockExplorerUrls: [CFG.network.explorerUrl]
     }]);
   }
@@ -511,43 +540,61 @@ function chainNow() {
   return chainClock.chainNow + Math.floor((Date.now() - chainClock.readAt) / 1000);
 }
 
-// stakeDetails() returns 11 static values, so plain word indexing is enough —
-// no dynamic offset handling required.
-function decodeStakeDetails(data) {
+// getStakeInfo() returns 8 static words, so plain word indexing is enough —
+// no dynamic offset handling required. Word order, straight from the ABI:
+//   owner, tier, stakedAt, lastClaimAt, lockDuration, unlockAt, nextClaimAt, pending
+//
+// The tuple carries no rate, so `ratePerDay` is attached from the tier table.
+// That is what lets the 1s ticker reproduce _pending() locally between reads.
+function decodeStakeInfo(data, ratesPerDay = tierRatePerDay) {
+  const tier = Number(decodeUintAt(data, 1));
   return {
-    owner:         decodeAddressAt(data, 0),
-    tier:          Number(decodeUintAt(data, 1)),
-    ratePerSecond: decodeUintAt(data, 2),
-    stakedAt:      Number(decodeUintAt(data, 3)),
-    lockDuration:  Number(decodeUintAt(data, 4)),
-    unlockAt:      Number(decodeUintAt(data, 5)),
-    lastClaimAt:   Number(decodeUintAt(data, 6)),
-    nextClaimAt:   Number(decodeUintAt(data, 7)),
-    pending:       decodeUintAt(data, 8),
-    accrued:       decodeUintAt(data, 9),
-    checkpoint:    Number(decodeUintAt(data, 10))
+    owner:        decodeAddressAt(data, 0),
+    tier,
+    stakedAt:     Number(decodeUintAt(data, 2)),
+    lastClaimAt:  Number(decodeUintAt(data, 3)),
+    lockDuration: Number(decodeUintAt(data, 4)),
+    unlockAt:     Number(decodeUintAt(data, 5)),
+    nextClaimAt:  Number(decodeUintAt(data, 6)),
+    pending:      decodeUintAt(data, 7),
+    ratePerDay:   ratesPerDay[tier] || 0n
   };
+}
+
+// rewardPerDay is a public array, so it is read one tier at a time. A partial
+// read is discarded outright: a zeroed rate would silently render 0 pending.
+async function readTierRates() {
+  const staking = CFG.stakingContract;
+  const raw = await Promise.all(
+    Array.from({ length: TIER_COUNT }, (_, tier) =>
+      call(staking, `${SEL.rewardPerDay}${encodeUint(tier)}`).catch(() => null))
+  );
+  if (raw.some(r => !r || r === '0x')) return tierRatePerDay;
+  tierRatePerDay = raw.map(r => decodeUintAt(r, 0));
+  return tierRatePerDay;
 }
 
 async function readStakingState(owner) {
   const staking = CFG.stakingContract;
   const records = new Map();
 
-  const [idsRaw] = await Promise.all([
-    call(staking, `${SEL.stakedTokenIds}${encodeAddr(owner)}`),
+  // Rates are needed before the records are decoded, so they are read first.
+  const [idsRaw, ratesPerDay] = await Promise.all([
+    call(staking, `${SEL.getStakedTokenIds}${encodeAddr(owner)}`),
+    readTierRates(),
     refreshChainClock()
   ]);
   const ids = decodeUintArray(idsRaw).map(id => id.toString());
 
-  // One stakeDetails read per staked token. A single failed read must not blank
+  // One getStakeInfo read per staked token. A single failed read must not blank
   // the whole staked tab, so failures are dropped individually.
   const details = await Promise.all(
-    ids.map(id => call(staking, `${SEL.stakeDetails}${encodeUint(id)}`).catch(() => null))
+    ids.map(id => call(staking, `${SEL.getStakeInfo}${encodeUint(id)}`).catch(() => null))
   );
   ids.forEach((id, i) => {
     const raw = details[i];
     if (!raw || raw === '0x') return;
-    records.set(id, decodeStakeDetails(raw));
+    records.set(id, decodeStakeInfo(raw, ratesPerDay));
   });
 
   const [rateRaw, boundsRaw] = await Promise.all([
@@ -570,12 +617,17 @@ async function readStakingState(owner) {
   return { records };
 }
 
-// ── Live reward maths (mirrors _pendingReward in GreenFlockStaking.sol) ────────
-// Solidity: accruedReward + (block.timestamp - rewardCheckpoint) * ratePerSecond
+// ── Live reward maths (mirrors _pending in RobinPumpNFTStaking.sol) ───────────
+// Solidity: (rewardPerDay[tier] * (block.timestamp - lastClaimAt)) / 1 days
+//
+// The division is applied last, exactly as on-chain, so the ticker never drifts
+// from what a claim would actually pay. `lastClaimAt` is both the accrual
+// checkpoint and the cooldown anchor, so no separate checkpoint field exists.
 function localPending(stake, now = chainNow()) {
   if (!stake) return 0n;
-  const elapsed = BigInt(Math.max(0, now - stake.checkpoint));
-  return stake.accrued + elapsed * stake.ratePerSecond;
+  const elapsed = BigInt(Math.max(0, now - stake.lastClaimAt));
+  if (elapsed === 0n) return 0n;
+  return (stake.ratePerDay * elapsed) / BigInt(DAY_SECONDS);
 }
 
 function isClaimable(stake, now = chainNow()) {
@@ -1103,7 +1155,7 @@ async function refreshState() {
     const indexLag = nftBalance !== BigInt(tokenIds.length);
 
     // Staked NFTs are held by the staking contract, so the Transfer replay above
-    // can never see them — they come only from stakedTokenIds(owner).
+    // can never see them — they come only from getStakedTokenIds(owner).
     let stakedRecords = new Map();
     if (STAKING_ACTIVE) {
       setBusy(true, 'Reading your staking positions…');
@@ -1390,25 +1442,35 @@ async function handleClaim(tokenId) {
     pendingText: 'Claim submitted.',
     successTitle: 'Rewards claimed.',
     successBody: `$ROBINPUMP from #${tokenId} was sent to your wallet.`,
-    buildData: async () => `${SEL.claimReward}${encodeUint(tokenId)}`
+    buildData: async () => `${SEL.claim}${encodeUint(tokenId)}`
   });
 }
 
 async function handleClaimAll() {
   const now = chainNow();
-  const ready = [...stakeIndex.values()].filter(s => now >= s.nextClaimAt).length;
-  if (!ready) {
+  // claimBatch() reverts the whole call if any id is still cooling down, so the
+  // list is filtered here rather than letting the contract reject it. The cap
+  // mirrors MAX_BATCH_SIZE; anything above it needs a second transaction.
+  const ready = [...stakeIndex.entries()]
+    .filter(([, s]) => now >= s.nextClaimAt)
+    .map(([id]) => id);
+  if (!ready.length) {
     toast('info', 'Nothing claimable yet.', 'Every staked NFT is still inside its 24-hour cooldown.');
     return;
   }
   if (DEMO_MODE) { await demoClaimAll(); return; }
+
+  const batch = ready.slice(0, MAX_BATCH_SIZE);
+  const remaining = ready.length - batch.length;
   await runTx({
     label: 'Claim all',
     to: CFG.stakingContract,
     pendingText: 'Claim-all submitted.',
     successTitle: 'Rewards claimed.',
-    successBody: `Claimed ${ready} NFT${ready !== 1 ? 's' : ''}. NFTs still cooling down were skipped.`,
-    buildData: async () => SEL.claimAllRewards
+    successBody: `Claimed ${batch.length} NFT${batch.length !== 1 ? 's' : ''}.`
+      + (remaining ? ` ${remaining} more are ready — run Claim all again.` : '')
+      + ' NFTs still cooling down were skipped.',
+    buildData: async () => `${SEL.claimBatch}${encodeUintArray(batch)}`
   });
 }
 
@@ -1514,23 +1576,15 @@ const DEMO_STAKED_SEED = [
 ];
 
 // Mutable demo session: which tokens are staked, and the simulated wallet balance.
-let demoRecords = new Map();   // tokenId → same shape decodeStakeDetails() returns
+let demoRecords = new Map();   // tokenId → same shape decodeStakeInfo() returns
 let demoBalance = 0n;
 let demoSeeded = false;
 
 const demoDelay = ms => new Promise(r => setTimeout(r, ms));
 
-// Decimal string/number → base units, without ever losing precision to floats.
-function demoUnits(amount) {
-  const [whole, frac = ''] = String(amount).split('.');
-  const padded = (frac + '0'.repeat(TOKEN_DECIMALS)).slice(0, TOKEN_DECIMALS);
-  return BigInt(whole + padded);
-}
-
-function demoRatePerSecond(tier) {
+function demoRatePerDay(tier) {
   const cfg = TIER_CONFIG[tier];
-  if (!cfg) return 0n;
-  return demoUnits(cfg.ratePerDay) / BigInt(DAY_SECONDS);
+  return cfg ? toBaseUnits(cfg.ratePerDay) : 0n;
 }
 
 function demoMetadata(entry) {
@@ -1540,24 +1594,22 @@ function demoMetadata(entry) {
   };
 }
 
-// Builds a record with exactly the field types decodeStakeDetails() produces:
-// BigInt for token amounts and rate, Number for every timestamp. A mismatch here
-// would make localPending() throw on mixed-type arithmetic in the 1s ticker.
+// Builds a record with exactly the field types decodeStakeInfo() produces:
+// BigInt for token amounts and the daily rate, Number for every timestamp. A
+// mismatch here would make localPending() throw on mixed-type arithmetic in the
+// 1s ticker.
 function demoRecord(tier, { stakedAt, lockDuration, lastClaimAt }) {
-  const ratePerSecond = demoRatePerSecond(tier);
   const tierIndex = Object.keys(TIER_CONFIG).indexOf(tier);
   return {
-    owner:         DEMO_ACCOUNT.toLowerCase(),
-    tier:          tierIndex < 0 ? 0 : tierIndex,
-    ratePerSecond,
+    owner:        DEMO_ACCOUNT.toLowerCase(),
+    tier:         tierIndex < 0 ? 0 : tierIndex,
     stakedAt,
-    lockDuration,
-    unlockAt:      stakedAt + lockDuration,
     lastClaimAt,
-    nextClaimAt:   lastClaimAt + lockLimits.cooldown,
-    pending:       0n,
-    accrued:       0n,
-    checkpoint:    lastClaimAt
+    lockDuration,
+    unlockAt:     stakedAt + lockDuration,
+    nextClaimAt:  lastClaimAt + lockLimits.cooldown,
+    pending:      0n,
+    ratePerDay:   demoRatePerDay(tier)
   };
 }
 
@@ -1573,7 +1625,7 @@ function seedDemoRecords() {
       lastClaimAt:  now - seed.lastClaimHoursAgo * 3600
     }));
   });
-  demoBalance = demoUnits('12500.5');
+  demoBalance = toBaseUnits('12500.5');
   demoSeeded = true;
 }
 
@@ -1584,7 +1636,7 @@ function buildDemoState() {
 
   stakeIndex = new Map(demoRecords);
   walletRatePerSecond = [...demoRecords.values()]
-    .reduce((sum, r) => sum + r.ratePerSecond, 0n);
+    .reduce((sum, r) => sum + r.ratePerDay / BigInt(DAY_SECONDS), 0n);
 
   nftData = DEMO_INVENTORY.map(entry => {
     const stake = demoRecords.get(entry.tokenId) || null;
@@ -1693,8 +1745,8 @@ async function demoUnstake(tokenId) {
   });
 }
 
-// Resets accrual exactly as claimReward() does: pay out, zero the accrued
-// bucket, move the checkpoint, and restart the 24h cooldown.
+// Resets accrual exactly as _settle() does: pay out, advance lastClaimAt to the
+// current instant, and restart the 24h cooldown from that same instant.
 function applyDemoClaim(id, now) {
   const record = demoRecords.get(id);
   if (!record) return 0n;
@@ -1702,9 +1754,7 @@ function applyDemoClaim(id, now) {
   demoBalance += paid;
   demoRecords.set(id, {
     ...record,
-    accrued:     0n,
     pending:     0n,
-    checkpoint:  now,
     lastClaimAt: now,
     nextClaimAt: now + lockLimits.cooldown
   });

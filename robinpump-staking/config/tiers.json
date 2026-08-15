@@ -1,0 +1,38 @@
+{
+  "$comment": [
+    "Reward rates for RobinPumpNFTStaking, expressed in WHOLE reward tokens per day.",
+    "Solidity never sees these decimal strings: scripts/configure-tiers.ts converts each",
+    "value to base units using the LIVE decimals() value read from the reward token,",
+    "then passes integers to the contract. Do not introduce floating point on-chain.",
+    "Tier index order is fixed by the contract: 0..4 = Legendary..Common.",
+    "A rate of 0 is rejected by the contract (RewardRateNotSet)."
+  ],
+  "rewardTokenDecimalsAssumption": null,
+  "tiers": [
+    {
+      "index": 0,
+      "name": "Legendary",
+      "rewardPerDay": "1000"
+    },
+    {
+      "index": 1,
+      "name": "Epic",
+      "rewardPerDay": "333.333333"
+    },
+    {
+      "index": 2,
+      "name": "Rare",
+      "rewardPerDay": "111.111111"
+    },
+    {
+      "index": 3,
+      "name": "Uncommon",
+      "rewardPerDay": "37.037037"
+    },
+    {
+      "index": 4,
+      "name": "Common",
+      "rewardPerDay": "12.345679"
+    }
+  ]
+}
