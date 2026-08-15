@@ -14,6 +14,7 @@
     "deploy:mainnet": "hardhat run scripts/deploy.ts --network robinhood",
     "configure:tiers": "hardhat run scripts/configure-tiers.ts --network robinhood",
     "configure:tiers:csv": "hardhat run scripts/configure-tiers-from-csv.ts --network robinhood",
+    "auto:tiers": "hardhat run scripts/auto-configure-tiers.ts --network robinhood",
     "fund:rewards": "hardhat run scripts/fund-rewards.ts --network robinhood",
     "lock:rarity": "hardhat run scripts/lock-rarity.ts --network robinhood",
     "verify:contract": "hardhat run scripts/verify.ts --network robinhood",

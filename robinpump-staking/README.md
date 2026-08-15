@@ -121,6 +121,32 @@ npm run abi                   # 8. export frontend-abi/RobinPumpNFTStaking.json
 
 **Step 3** needs a real rarity report. `config/token-tiers.example.csv` is a template with a handful of illustrative rows; it is **not** the Green Flock rarity distribution. Supply the real `tokenId,tier` mapping for all 3333 ids. The script reads on-chain state first and skips ids already set correctly, so it can be re-run after an interruption or a partial rarity export.
 
+### Step 3 on a thin gas budget: `npm run auto:tiers`
+
+`configure:tiers:csv` assumes the owner wallet can pay for every remaining batch in one sitting. When gas arrives in small top-ups instead, use the auto writer:
+
+```bash
+npm run auto:tiers                        # daemon: write whatever the balance affords, wait, repeat
+AUTO_TIER_LIMIT=100 npm run auto:tiers    # stop after 100 ids this run
+AUTO_DRY_RUN=1 npm run auto:tiers         # print the plan and the real cost, send nothing
+AUTO_ONCE=1 npm run auto:tiers            # one pass, then exit (no waiting loop)
+```
+
+It reads the still-unwritten ids from the contract's own `unconfiguredTokenIds()` view, prices one real `setTokenTiers()` batch against the live gas price, and sends only as many batches as the current balance can pay for. Then it sleeps and re-checks, so an incoming top-up is spent on the next cycle without waiting for the full amount.
+
+There is no checkpoint file and nothing to resume by hand — the chain is the only source of truth. Kill it at any point, on any machine, and run it again.
+
+| variable | default | meaning |
+| --- | --- | --- |
+| `AUTO_TIER_LIMIT` | `0` (no limit) | stop after this many ids in one run |
+| `AUTO_GAS_RESERVE_ETH` | `0` | native balance to leave untouched |
+| `AUTO_POLL_SECONDS` | `60` | how often to re-check the balance while waiting |
+| `AUTO_BATCH_SIZE` | `50` | ids per transaction, capped at `MAX_BATCH_SIZE` |
+| `AUTO_DRY_RUN` | off | plan only, send nothing |
+| `AUTO_ONCE` | off | single pass, no waiting loop |
+
+It aborts before any transaction if the signer is not `owner()` or if `rarityLocked()` is already true, and it fills gaps only: an id whose on-chain tier disagrees with the CSV is left alone, because correcting a wrong tier is a decision rather than a background job. Use `configure:tiers:csv` for that. It never calls `lockRarity()`.
+
 **Step 5** prints a PASS / WARN / BLOCKED table and a final `NOT READY` / `USABLE` / `READY` verdict. Blocking items are: an external contract with no bytecode, a tier rate left at zero, incomplete rarity, and an empty reward pool. Warnings are: on-chain rates drifting from `config/tiers.json`, rarity not yet locked, and deposits paused.
 
 **Step 6** requires `configuredCount == 3333` on-chain *and* `CONFIRM_LOCK_RARITY=YES` in the environment:
