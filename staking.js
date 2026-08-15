@@ -2150,3 +2150,18 @@ if (DEMO_MODE) {
       + 'writing the rarity tiers to the contract, and depositing the $ROBINPUMP reward vault.'
   );
 }
+
+// ── Staking contract card ──────────────────────────────────────────────────────
+// The card in the "On-Chain Configuration" grid states a deployment fact, so it is
+// driven from the same gate as everything else. The HTML carries the "activation
+// pending" wording as its default; once the gate opens this rewrites it instead of
+// leaving a second copy of the status to drift out of sync.
+if (STAKING_ACTIVE) {
+  setText('stakingContractStatus', 'Active — staking open');
+  setText('stakingContractNote', 'Staking, reward claims, and unstaking are live. Rewards accrue per second against the rarity tier of each token ID.');
+  const statusEl = $('stakingContractStatus');
+  if (statusEl) statusEl.classList.remove('status-pending-text');
+} else if (DEMO_MODE) {
+  setText('stakingContractStatus', 'Preview mode');
+  setText('stakingContractNote', 'This page is running on synthetic data. The address above is the real deployment, but no call is made to it in preview mode.');
+}

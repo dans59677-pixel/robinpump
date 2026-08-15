@@ -351,15 +351,21 @@
             <a href="https://robinhoodchain.blockscout.com/address/0xbd00ce673b84be8022af8be0039c7a5af69724a9" target="_blank" rel="noopener noreferrer" class="explorer-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
           </div>
         </div>
-        <div class="contract-card contract-card--disabled">
+        <div class="contract-card">
           <p class="card-eyebrow">STAKING CONTRACT</p>
-          <p class="contract-name">Not Deployed</p>
+          <p class="contract-name" id="stakingContractName">RobinPumpNFTStaking</p>
           <dl class="contract-meta">
-            <div><dt>Status</dt><dd class="status-pending-text">Pending deployment</dd></div>
+            <div><dt>Status</dt><dd class="status-pending-text" id="stakingContractStatus">Deployed — activation pending</dd></div>
+            <div><dt>Chain ID</dt><dd>4663</dd></div>
             <div><dt>Functions</dt><dd>stake / unstake / claim</dd></div>
             <div><dt>Security</dt><dd>ReentrancyGuard + SafeERC20</dd></div>
           </dl>
-          <p class="contract-disabled-note">Staking transactions will be enabled once the audited contract is deployed and verified. See <code>STAKING_DEPLOYMENT.md</code> for requirements.</p>
+          <div class="contract-address-row">
+            <code>0xc00C22Fe0955E4AB847CC7d9d4dAC37a4b28f609</code>
+            <button type="button" class="copy-btn" data-copy="0xc00C22Fe0955E4AB847CC7d9d4dAC37a4b28f609">Copy</button>
+            <a href="https://robinhoodchain.blockscout.com/address/0xc00C22Fe0955E4AB847CC7d9d4dAC37a4b28f609" target="_blank" rel="noopener noreferrer" class="explorer-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+          </div>
+          <p class="contract-disabled-note" id="stakingContractNote">The contract is live on Robinhood Chain. Two owner steps remain before transactions open: writing the rarity tiers for all 3,333 token IDs on-chain, and depositing the $ROBINPUMP reward vault into the contract address above.</p>
         </div>
       </div>
     </section>
