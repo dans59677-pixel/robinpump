@@ -330,6 +330,36 @@
   color: var(--text); overflow-wrap: anywhere;
 }
 
+/* --- Reward pool shortfall + deferred rewards ---
+   .stake-summary is a two-column grid, so both blocks span the full width and
+   sit under the live figure and the stat grid. */
+.pool-notice, .owed-row { grid-column: 1 / -1; }
+.pool-notice {
+  margin: 0; padding: 12px 14px;
+  border: 1px solid rgba(255,184,0,.35); border-left-width: 3px;
+  border-radius: 8px; background: rgba(255,184,0,.08);
+  font: 11px/1.6 var(--mono); color: var(--text);
+}
+.owed-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+  padding: 16px 18px; border-radius: 8px;
+  border: 1px solid rgba(0,255,136,.22); background: rgba(255,255,255,.03);
+}
+.owed-label {
+  display: block; margin-bottom: 4px;
+  font: 700 10px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase;
+  color: var(--text-muted);
+}
+.owed-amount {
+  font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--green);
+  font-variant-numeric: tabular-nums; overflow-wrap: anywhere;
+}
+.owed-hint {
+  display: block; margin-top: 6px;
+  font: 11px/1.5 var(--mono); color: var(--text-muted); opacity: .75;
+}
+
 /* --- Per-card lock / claim state (emitted by buildNftCard) --- */
 .nft-meta-row {
   display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
@@ -630,6 +660,8 @@
   .lock-modal-actions { flex-direction: column-reverse; }
   .claim-all-bar { flex-direction: column; align-items: stretch; }
   .claim-all-bar .btn { justify-content: center; }
+  .owed-row { flex-direction: column; align-items: stretch; }
+  .owed-row .btn { justify-content: center; }
   .dashboard-toolbar { flex-direction: column; align-items: stretch; }
   .dashboard-tabs { width: 100%; }
   .dashboard-refresh { width: 100%; justify-content: center; }

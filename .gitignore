@@ -17,5 +17,20 @@ robinpump-staking/.env
 robinpump-staking/coverage/
 robinpump-staking/coverage.json
 
+# --- NFT generator output (kept local) ----------------------------------------
+# 718 MB across 10016 files, mostly artwork (`upload/` duplicates `images/`).
+# Nothing at runtime reads it: the frontend resolves artwork from the on-chain
+# tokenURI. It is only the offline input to scripts/generate-token-tiers.js,
+# whose result IS committed (robinpump-staking/config/token-tiers.csv and
+# token-tiers.report.json), so the tier mapping stays reviewable in the repo.
+# Consequence: a fresh clone cannot re-run generate-token-tiers.js without
+# restoring ROBINPUMP/metadata.raw.csv and ROBINPUMP/traits.json locally.
+ROBINPUMP/
+
+# --- Working notes (kept local) -----------------------------------------------
+# Original Indonesian brief for the staking extension. Requirements only, no
+# code depends on it, so it stays out of the repo at the owner's request.
+update .md
+
 # --- Scratch ------------------------------------------------------------------
 tmp-*.js

@@ -1,0 +1,1030 @@
+{
+  "generatedAt": "2026-08-15T08:49:31.955Z",
+  "generator": "scripts/generate-token-tiers.js",
+  "model": "A: trait-frequency score, population 1:3:9:27:81",
+  "sources": {
+    "metadata": "../ROBINPUMP/metadata.raw.csv",
+    "traitStatistics": "../ROBINPUMP/traits.json"
+  },
+  "tokenCount": 3333,
+  "traitNames": [
+    "Background",
+    "Character",
+    "Face",
+    "Clothes",
+    "Clothes 2",
+    "Hat",
+    "Pants",
+    "Pants 2",
+    "Symbol",
+    "Clothes 3",
+    "Accessory"
+  ],
+  "bands": [
+    {
+      "tier": 0,
+      "name": "Legendary",
+      "count": 28,
+      "percentage": 0.8401,
+      "scoreMin": 976.350793,
+      "scoreMax": 3423.78251,
+      "rewardPerDay": 1000,
+      "emissionPerDayIfAllStaked": 28000
+    },
+    {
+      "tier": 1,
+      "name": "Epic",
+      "count": 83,
+      "percentage": 2.4902,
+      "scoreMin": 599.245743,
+      "scoreMax": 970.237381,
+      "rewardPerDay": 333.333333,
+      "emissionPerDayIfAllStaked": 27666.666639
+    },
+    {
+      "tier": 2,
+      "name": "Rare",
+      "count": 248,
+      "percentage": 7.4407,
+      "scoreMin": 288.643254,
+      "scoreMax": 598.629503,
+      "rewardPerDay": 111.111111,
+      "emissionPerDayIfAllStaked": 27555.555528
+    },
+    {
+      "tier": 3,
+      "name": "Uncommon",
+      "count": 744,
+      "percentage": 22.3222,
+      "scoreMin": 180.557882,
+      "scoreMax": 288.456472,
+      "rewardPerDay": 37.037037,
+      "emissionPerDayIfAllStaked": 27555.555528
+    },
+    {
+      "tier": 4,
+      "name": "Common",
+      "count": 2230,
+      "percentage": 66.9067,
+      "scoreMin": 74.109044,
+      "scoreMax": 180.496017,
+      "rewardPerDay": 12.345679,
+      "emissionPerDayIfAllStaked": 27530.86417
+    }
+  ],
+  "totalEmissionPerDayIfAllStaked": 138308.641865,
+  "rarest": [
+    {
+      "tokenId": 61,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 3423.78251,
+      "traits": {
+        "Background": "White",
+        "Character": "Original",
+        "Face": "Green",
+        "Clothes": "Black",
+        "Clothes 2": "Red",
+        "Hat": "Original",
+        "Pants": "Holographic",
+        "Pants 2": "White",
+        "Symbol": "Black",
+        "Clothes 3": "Lime",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 522,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 3414.719724,
+      "traits": {
+        "Background": "Black",
+        "Character": "Green",
+        "Face": "Original",
+        "Clothes": "Orange",
+        "Clothes 2": "White",
+        "Hat": "Holographic",
+        "Pants": "Red",
+        "Pants 2": "Orange",
+        "Symbol": "White",
+        "Clothes 3": "Orange",
+        "Accessory": "Sunglasses"
+      }
+    },
+    {
+      "tokenId": 396,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 3414.529266,
+      "traits": {
+        "Background": "Green",
+        "Character": "White",
+        "Face": "Green",
+        "Clothes": "Holographic",
+        "Clothes 2": "Orange",
+        "Hat": "Blue",
+        "Pants": "Orange",
+        "Pants 2": "Black",
+        "Symbol": "Original",
+        "Clothes 3": "Black",
+        "Accessory": "Sunglasses"
+      }
+    },
+    {
+      "tokenId": 3045,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 2409.697851,
+      "traits": {
+        "Background": "Holographic",
+        "Character": "Blue",
+        "Face": "Neon",
+        "Clothes": "Green",
+        "Clothes 2": "Blue",
+        "Hat": "Cyber",
+        "Pants": "Black",
+        "Pants 2": "White",
+        "Symbol": "Original",
+        "Clothes 3": "Original",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 1975,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 2394.191566,
+      "traits": {
+        "Background": "Neon Green",
+        "Character": "Orange",
+        "Face": "Black",
+        "Clothes": "Neon",
+        "Clothes 2": "Orange",
+        "Hat": "Black",
+        "Pants": "White",
+        "Pants 2": "Cyber",
+        "Symbol": "Green",
+        "Clothes 3": "Lime",
+        "Accessory": "Crown"
+      }
+    },
+    {
+      "tokenId": 1520,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 2389.041784,
+      "traits": {
+        "Background": "Cyber",
+        "Character": "Orange",
+        "Face": "Red",
+        "Clothes": "Gold",
+        "Clothes 2": "Black",
+        "Hat": "Cyber",
+        "Pants": "Original",
+        "Pants 2": "Original",
+        "Symbol": "Purple",
+        "Clothes 3": "Original",
+        "Accessory": "Cyber Glasses"
+      }
+    },
+    {
+      "tokenId": 2997,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 2014.962424,
+      "traits": {
+        "Background": "Blue",
+        "Character": "Dark Green",
+        "Face": "White",
+        "Clothes": "Black",
+        "Clothes 2": "Black",
+        "Hat": "Orange",
+        "Pants": "Gold",
+        "Pants 2": "Orange",
+        "Symbol": "Cyber",
+        "Clothes 3": "Lime",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 630,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 1838.371248,
+      "traits": {
+        "Background": "Black",
+        "Character": "Original",
+        "Face": "Green",
+        "Clothes": "Green",
+        "Clothes 2": "Holographic",
+        "Hat": "Original",
+        "Pants": "White",
+        "Pants 2": "Checker",
+        "Symbol": "Lime",
+        "Clothes 3": "Lime",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 2635,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 1837.850742,
+      "traits": {
+        "Background": "White",
+        "Character": "Green",
+        "Face": "Purple",
+        "Clothes": "Green",
+        "Clothes 2": "Dark Green",
+        "Hat": "Black",
+        "Pants": "Green",
+        "Pants 2": "Purple",
+        "Symbol": "Cyber",
+        "Clothes 3": "Red",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 2511,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 1837.066121,
+      "traits": {
+        "Background": "White",
+        "Character": "Orange",
+        "Face": "Red",
+        "Clothes": "Dark Green",
+        "Clothes 2": "Silver",
+        "Hat": "Lime",
+        "Pants": "White",
+        "Pants 2": "Cyber",
+        "Symbol": "Green",
+        "Clothes 3": "White",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 781,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 1793.304568,
+      "traits": {
+        "Background": "Particles",
+        "Character": "Black",
+        "Face": "Holographic",
+        "Clothes": "Blue",
+        "Clothes 2": "Original",
+        "Hat": "Blue",
+        "Pants": "Orange",
+        "Pants 2": "Original",
+        "Symbol": "White",
+        "Clothes 3": "Original",
+        "Accessory": "Sunglasses"
+      }
+    },
+    {
+      "tokenId": 1375,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 1791.624235,
+      "traits": {
+        "Background": "Particles",
+        "Character": "White",
+        "Face": "Lime",
+        "Clothes": "White",
+        "Clothes 2": "Dark Green",
+        "Hat": "Orange",
+        "Pants": "Original",
+        "Pants 2": "Holographic",
+        "Symbol": "Green",
+        "Clothes 3": "Original",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 1687,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 1789.901187,
+      "traits": {
+        "Background": "Holographic",
+        "Character": "White",
+        "Face": "Black",
+        "Clothes": "Black",
+        "Clothes 2": "Lime",
+        "Hat": "Purple",
+        "Pants": "Green",
+        "Pants 2": "Red",
+        "Symbol": "White",
+        "Clothes 3": "Green",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 80,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 1763.237991,
+      "traits": {
+        "Background": "Neon Green",
+        "Character": "Orange",
+        "Face": "Holographic",
+        "Clothes": "Original",
+        "Clothes 2": "Blue",
+        "Hat": "Black",
+        "Pants": "Black",
+        "Pants 2": "Red",
+        "Symbol": "Black",
+        "Clothes 3": "Green",
+        "Accessory": "Sunglasses"
+      }
+    },
+    {
+      "tokenId": 216,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 1753.819166,
+      "traits": {
+        "Background": "Purple",
+        "Character": "Lime",
+        "Face": "Black",
+        "Clothes": "Original",
+        "Clothes 2": "Original",
+        "Hat": "White",
+        "Pants": "Black",
+        "Pants 2": "Holographic",
+        "Symbol": "Orange",
+        "Clothes 3": "Black",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 3027,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 1745.948459,
+      "traits": {
+        "Background": "Black",
+        "Character": "Black",
+        "Face": "Red",
+        "Clothes": "Orange",
+        "Clothes 2": "Holographic",
+        "Hat": "Orange",
+        "Pants": "Original",
+        "Pants 2": "Orange",
+        "Symbol": "Original",
+        "Clothes 3": "Black",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 844,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 1735.52676,
+      "traits": {
+        "Background": "Original",
+        "Character": "Original",
+        "Face": "Black",
+        "Clothes": "Gold",
+        "Clothes 2": "Original",
+        "Hat": "Orange",
+        "Pants": "White",
+        "Pants 2": "White",
+        "Symbol": "Original",
+        "Clothes 3": "White",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 222,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 1495.788561,
+      "traits": {
+        "Background": "Black",
+        "Character": "Orange",
+        "Face": "Gold",
+        "Clothes": "Neon",
+        "Clothes 2": "Original",
+        "Hat": "Purple",
+        "Pants": "Cyan",
+        "Pants 2": "Rainbow",
+        "Symbol": "Green",
+        "Clothes 3": "Black",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 2325,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 1418.978717,
+      "traits": {
+        "Background": "Galaxy",
+        "Character": "Black",
+        "Face": "White",
+        "Clothes": "Red",
+        "Clothes 2": "Rainbow",
+        "Hat": "Green",
+        "Pants": "White",
+        "Pants 2": "White",
+        "Symbol": "Purple",
+        "Clothes 3": "White",
+        "Accessory": "Sunglasses"
+      }
+    },
+    {
+      "tokenId": 1271,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 1112.415981,
+      "traits": {
+        "Background": "Grid",
+        "Character": "Green",
+        "Face": "White",
+        "Clothes": "White",
+        "Clothes 2": "White",
+        "Hat": "Neon",
+        "Pants": "Blue",
+        "Pants 2": "Original",
+        "Symbol": "Neon",
+        "Clothes 3": "Checker",
+        "Accessory": "Sunglasses"
+      }
+    },
+    {
+      "tokenId": 1140,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 1086.124485,
+      "traits": {
+        "Background": "Black",
+        "Character": "White",
+        "Face": "White",
+        "Clothes": "Green",
+        "Clothes 2": "Rainbow",
+        "Hat": "Silver",
+        "Pants": "Green",
+        "Pants 2": "Orange",
+        "Symbol": "Blue",
+        "Clothes 3": "Purple",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 460,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 1077.50169,
+      "traits": {
+        "Background": "Black",
+        "Character": "Neon",
+        "Face": "Red",
+        "Clothes": "Cyan",
+        "Clothes 2": "Green",
+        "Hat": "Dark Green",
+        "Pants": "Orange",
+        "Pants 2": "White",
+        "Symbol": "Green",
+        "Clothes 3": "Checker",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 2687,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 1060.662506,
+      "traits": {
+        "Background": "Particles",
+        "Character": "Cyber",
+        "Face": "Cyber",
+        "Clothes": "Original",
+        "Clothes 2": "Red",
+        "Hat": "Green",
+        "Pants": "Dark Green",
+        "Pants 2": "White",
+        "Symbol": "Black",
+        "Clothes 3": "Original",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 462,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 1020.88168,
+      "traits": {
+        "Background": "Neon Green",
+        "Character": "Red",
+        "Face": "Orange",
+        "Clothes": "Cyan",
+        "Clothes 2": "Rainbow",
+        "Hat": "Lime",
+        "Pants": "Lime",
+        "Pants 2": "Stripes",
+        "Symbol": "Orange",
+        "Clothes 3": "White",
+        "Accessory": "Sunglasses"
+      }
+    },
+    {
+      "tokenId": 763,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 1009.234328,
+      "traits": {
+        "Background": "Red",
+        "Character": "Cyan",
+        "Face": "Black",
+        "Clothes": "Black",
+        "Clothes 2": "Orange",
+        "Hat": "Red",
+        "Pants": "White",
+        "Pants 2": "Pink",
+        "Symbol": "Holographic",
+        "Clothes 3": "Green",
+        "Accessory": "Cyber Glasses"
+      }
+    },
+    {
+      "tokenId": 1451,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 996.489948,
+      "traits": {
+        "Background": "Purple",
+        "Character": "Neon",
+        "Face": "Orange",
+        "Clothes": "Black",
+        "Clothes 2": "Black",
+        "Hat": "Green",
+        "Pants": "Pink",
+        "Pants 2": "Blue",
+        "Symbol": "Black",
+        "Clothes 3": "Purple",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 120,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 989.398435,
+      "traits": {
+        "Background": "Glow",
+        "Character": "Black",
+        "Face": "Original",
+        "Clothes": "Green",
+        "Clothes 2": "Black",
+        "Hat": "Orange",
+        "Pants": "Red",
+        "Pants 2": "Black",
+        "Symbol": "Holographic",
+        "Clothes 3": "Green",
+        "Accessory": "Cyber Glasses"
+      }
+    },
+    {
+      "tokenId": 2307,
+      "tier": 0,
+      "tierName": "Legendary",
+      "score": 976.350793,
+      "traits": {
+        "Background": "Original",
+        "Character": "Dark Green",
+        "Face": "Black",
+        "Clothes": "Cyber",
+        "Clothes 2": "Black",
+        "Hat": "Lime",
+        "Pants": "Green",
+        "Pants 2": "Black",
+        "Symbol": "Original",
+        "Clothes 3": "Cyber",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 1090,
+      "tier": 1,
+      "tierName": "Epic",
+      "score": 970.237381,
+      "traits": {
+        "Background": "Black",
+        "Character": "Dark Green",
+        "Face": "Dark Green",
+        "Clothes": "White",
+        "Clothes 2": "Rainbow",
+        "Hat": "Dark Green",
+        "Pants": "Blue",
+        "Pants 2": "Red",
+        "Symbol": "Blue",
+        "Clothes 3": "Green",
+        "Accessory": "Cyber Glasses"
+      }
+    },
+    {
+      "tokenId": 2176,
+      "tier": 1,
+      "tierName": "Epic",
+      "score": 960.23628,
+      "traits": {
+        "Background": "Gradient",
+        "Character": "White",
+        "Face": "Black",
+        "Clothes": "Lime",
+        "Clothes 2": "Purple",
+        "Hat": "Dark Green",
+        "Pants": "Neon",
+        "Pants 2": "White",
+        "Symbol": "Green",
+        "Clothes 3": "Neon",
+        "Accessory": "Sunglasses"
+      }
+    },
+    {
+      "tokenId": 2872,
+      "tier": 1,
+      "tierName": "Epic",
+      "score": 945.616924,
+      "traits": {
+        "Background": "White",
+        "Character": "Black",
+        "Face": "Orange",
+        "Clothes": "Orange",
+        "Clothes 2": "Orange",
+        "Hat": "White",
+        "Pants": "Lime",
+        "Pants 2": "Stripes",
+        "Symbol": "Orange",
+        "Clothes 3": "Gold",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 1203,
+      "tier": 1,
+      "tierName": "Epic",
+      "score": 945.024712,
+      "traits": {
+        "Background": "Green",
+        "Character": "Lime",
+        "Face": "Black",
+        "Clothes": "Purple",
+        "Clothes 2": "Green",
+        "Hat": "Original",
+        "Pants": "Black",
+        "Pants 2": "White",
+        "Symbol": "Holographic",
+        "Clothes 3": "Black",
+        "Accessory": "Sunglasses"
+      }
+    },
+    {
+      "tokenId": 3186,
+      "tier": 1,
+      "tierName": "Epic",
+      "score": 944.911851,
+      "traits": {
+        "Background": "Neon Green",
+        "Character": "Green",
+        "Face": "Lime",
+        "Clothes": "Red",
+        "Clothes 2": "Red",
+        "Hat": "Green",
+        "Pants": "Orange",
+        "Pants 2": "Green",
+        "Symbol": "Orange",
+        "Clothes 3": "Gold",
+        "Accessory": "Sunglasses"
+      }
+    },
+    {
+      "tokenId": 2895,
+      "tier": 1,
+      "tierName": "Epic",
+      "score": 932.128825,
+      "traits": {
+        "Background": "Blue",
+        "Character": "Black",
+        "Face": "Lime",
+        "Clothes": "Orange",
+        "Clothes 2": "Original",
+        "Hat": "Green",
+        "Pants": "White",
+        "Pants 2": "Original",
+        "Symbol": "Red",
+        "Clothes 3": "Gold",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 672,
+      "tier": 1,
+      "tierName": "Epic",
+      "score": 925.645633,
+      "traits": {
+        "Background": "White",
+        "Character": "Original",
+        "Face": "Blue",
+        "Clothes": "Green",
+        "Clothes 2": "Green",
+        "Hat": "Lime",
+        "Pants": "White",
+        "Pants 2": "White",
+        "Symbol": "White",
+        "Clothes 3": "Gold",
+        "Accessory": "Sunglasses"
+      }
+    },
+    {
+      "tokenId": 333,
+      "tier": 1,
+      "tierName": "Epic",
+      "score": 921.459028,
+      "traits": {
+        "Background": "Red",
+        "Character": "Neon",
+        "Face": "Black",
+        "Clothes": "Orange",
+        "Clothes 2": "Orange",
+        "Hat": "Original",
+        "Pants": "Original",
+        "Pants 2": "Lime",
+        "Symbol": "Black",
+        "Clothes 3": "White",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 44,
+      "tier": 1,
+      "tierName": "Epic",
+      "score": 920.013287,
+      "traits": {
+        "Background": "Green",
+        "Character": "Green",
+        "Face": "Cyber",
+        "Clothes": "Dark Green",
+        "Clothes 2": "Purple",
+        "Hat": "Black",
+        "Pants": "Silver",
+        "Pants 2": "Blue",
+        "Symbol": "Black",
+        "Clothes 3": "Original",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 1244,
+      "tier": 1,
+      "tierName": "Epic",
+      "score": 912.135994,
+      "traits": {
+        "Background": "Black",
+        "Character": "Black",
+        "Face": "Red",
+        "Clothes": "Black",
+        "Clothes 2": "Original",
+        "Hat": "Original",
+        "Pants": "Black",
+        "Pants 2": "Green",
+        "Symbol": "Holographic",
+        "Clothes 3": "Orange",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 352,
+      "tier": 1,
+      "tierName": "Epic",
+      "score": 909.759832,
+      "traits": {
+        "Background": "Green",
+        "Character": "Neon",
+        "Face": "Orange",
+        "Clothes": "White",
+        "Clothes 2": "Original",
+        "Hat": "Green",
+        "Pants": "Original",
+        "Pants 2": "Red",
+        "Symbol": "Original",
+        "Clothes 3": "Green",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 1431,
+      "tier": 1,
+      "tierName": "Epic",
+      "score": 898.526027,
+      "traits": {
+        "Background": "Cyber",
+        "Character": "Original",
+        "Face": "White",
+        "Clothes": "Black",
+        "Clothes 2": "Stripes",
+        "Hat": "Lime",
+        "Pants": "Pink",
+        "Pants 2": "Lime",
+        "Symbol": "Black",
+        "Clothes 3": "Cyber",
+        "Accessory": "None"
+      }
+    }
+  ],
+  "mostCommon": [
+    {
+      "tokenId": 2212,
+      "tier": 4,
+      "tierName": "Common",
+      "score": 75.977046,
+      "traits": {
+        "Background": "Green",
+        "Character": "Orange",
+        "Face": "Original",
+        "Clothes": "Green",
+        "Clothes 2": "White",
+        "Hat": "White",
+        "Pants": "Original",
+        "Pants 2": "Green",
+        "Symbol": "Orange",
+        "Clothes 3": "Black",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 1695,
+      "tier": 4,
+      "tierName": "Common",
+      "score": 75.905611,
+      "traits": {
+        "Background": "Black",
+        "Character": "Black",
+        "Face": "White",
+        "Clothes": "Black",
+        "Clothes 2": "Black",
+        "Hat": "Orange",
+        "Pants": "Orange",
+        "Pants 2": "Original",
+        "Symbol": "Original",
+        "Clothes 3": "Orange",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 2114,
+      "tier": 4,
+      "tierName": "Common",
+      "score": 75.775632,
+      "traits": {
+        "Background": "Black",
+        "Character": "Orange",
+        "Face": "Green",
+        "Clothes": "Green",
+        "Clothes 2": "White",
+        "Hat": "White",
+        "Pants": "Orange",
+        "Pants 2": "White",
+        "Symbol": "Green",
+        "Clothes 3": "Original",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 890,
+      "tier": 4,
+      "tierName": "Common",
+      "score": 75.372814,
+      "traits": {
+        "Background": "Original",
+        "Character": "Original",
+        "Face": "Green",
+        "Clothes": "Original",
+        "Clothes 2": "Orange",
+        "Hat": "Green",
+        "Pants": "Original",
+        "Pants 2": "Green",
+        "Symbol": "Orange",
+        "Clothes 3": "Original",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 2488,
+      "tier": 4,
+      "tierName": "Common",
+      "score": 75.2716,
+      "traits": {
+        "Background": "Black",
+        "Character": "Black",
+        "Face": "White",
+        "Clothes": "Black",
+        "Clothes 2": "Black",
+        "Hat": "White",
+        "Pants": "Black",
+        "Pants 2": "White",
+        "Symbol": "Black",
+        "Clothes 3": "Green",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 2520,
+      "tier": 4,
+      "tierName": "Common",
+      "score": 75.230565,
+      "traits": {
+        "Background": "Green",
+        "Character": "Orange",
+        "Face": "Black",
+        "Clothes": "Black",
+        "Clothes 2": "Original",
+        "Hat": "Black",
+        "Pants": "Original",
+        "Pants 2": "Green",
+        "Symbol": "Black",
+        "Clothes 3": "Green",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 3117,
+      "tier": 4,
+      "tierName": "Common",
+      "score": 75.072513,
+      "traits": {
+        "Background": "Green",
+        "Character": "White",
+        "Face": "Green",
+        "Clothes": "Original",
+        "Clothes 2": "Original",
+        "Hat": "Black",
+        "Pants": "Orange",
+        "Pants 2": "White",
+        "Symbol": "Black",
+        "Clothes 3": "Original",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 525,
+      "tier": 4,
+      "tierName": "Common",
+      "score": 74.966104,
+      "traits": {
+        "Background": "Green",
+        "Character": "Black",
+        "Face": "Black",
+        "Clothes": "Black",
+        "Clothes 2": "Black",
+        "Hat": "White",
+        "Pants": "Orange",
+        "Pants 2": "Green",
+        "Symbol": "Black",
+        "Clothes 3": "Orange",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 335,
+      "tier": 4,
+      "tierName": "Common",
+      "score": 74.451456,
+      "traits": {
+        "Background": "Green",
+        "Character": "Original",
+        "Face": "Original",
+        "Clothes": "Orange",
+        "Clothes 2": "Original",
+        "Hat": "White",
+        "Pants": "Orange",
+        "Pants 2": "Green",
+        "Symbol": "Green",
+        "Clothes 3": "Green",
+        "Accessory": "None"
+      }
+    },
+    {
+      "tokenId": 2675,
+      "tier": 4,
+      "tierName": "Common",
+      "score": 74.109044,
+      "traits": {
+        "Background": "White",
+        "Character": "Black",
+        "Face": "Black",
+        "Clothes": "White",
+        "Clothes 2": "Original",
+        "Hat": "Orange",
+        "Pants": "Orange",
+        "Pants 2": "Green",
+        "Symbol": "Black",
+        "Clothes 3": "Green",
+        "Accessory": "None"
+      }
+    }
+  ]
+}

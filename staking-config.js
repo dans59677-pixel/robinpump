@@ -70,13 +70,25 @@ window.RobinPumpStakingConfig = Object.freeze({
     'unstake(uint256)',
     'claim(uint256)',
     'claimBatch(uint256[])',
+    /*
+     * Withdraws the owedRewards credit that unstake() books when the pool was
+     * short at settlement time. Without this the credit is stranded on-chain.
+     */
+    'claimOwed()',
     // Reads
     'getStakedTokenIds(address)',
     'getStakeInfo(uint256)',
     'rewardPerDay(uint256)',
     'rewardRateOf(address)',
     'claimableRewardOf(address)',
-    'lockBounds()'
+    'lockBounds()',
+    /*
+     * The live reward pool: rewardToken.balanceOf(stakingContract). claim()
+     * reverts with InsufficientRewardPool when the settled amount exceeds this,
+     * so the UI must read it and cap what it advertises as claimable.
+     */
+    'rewardTokenBalance()',
+    'owedRewards(address)'
   ]),
   // Intentionally null: do not invent a transaction target.
   stakingContract: null,

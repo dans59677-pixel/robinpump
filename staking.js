@@ -68,6 +68,24 @@ let stakeIndex = new Map();
 let walletRatePerSecond = 0n;
 let tickerId = null;
 
+/*
+ * Reward pool awareness.
+ *
+ * The staking contract never mints: claim() pays out of
+ * rewardToken.balanceOf(stakingContract) and reverts with
+ * InsufficientRewardPool the moment the settled amount exceeds it. So the UI
+ * reads that balance on every refresh and treats it as a hard ceiling on what
+ * it advertises as claimable — an accrued figure the pool cannot pay is not a
+ * claimable figure.
+ *
+ * `null` means "not read yet" and is deliberately distinct from 0n ("read, and
+ * the pool is empty"): an unread pool must never be rendered as a shortfall.
+ */
+let rewardPoolBalance = null;
+// owedRewards(account): the credit unstake() books when the pool was short at
+// settlement time. Withdrawn separately via claimOwed().
+let owedRewards = 0n;
+
 // One wallet transaction at a time — prevents double-spend clicks and
 // overlapping approve/stake sequences.
 let txPending = false;
@@ -304,13 +322,16 @@ const SEL = Object.freeze({
   unstake:            selector('unstake(uint256)'),
   claim:              selector('claim(uint256)'),
   claimBatch:         selector('claimBatch(uint256[])'),
+  claimOwed:          selector('claimOwed()'),
   // Staking contract — reads
   getStakedTokenIds:  selector('getStakedTokenIds(address)'),
   getStakeInfo:       selector('getStakeInfo(uint256)'),
   rewardPerDay:       selector('rewardPerDay(uint256)'),
   rewardRateOf:       selector('rewardRateOf(address)'),
   claimableRewardOf:  selector('claimableRewardOf(address)'),
-  lockBounds:         selector('lockBounds()')
+  lockBounds:         selector('lockBounds()'),
+  rewardTokenBalance: selector('rewardTokenBalance()'),
+  owedRewards:        selector('owedRewards(address)')
 });
 
 // ── ABI encode / decode ───────────────────────────────────────────────────────
@@ -597,12 +618,19 @@ async function readStakingState(owner) {
     records.set(id, decodeStakeInfo(raw, ratesPerDay));
   });
 
-  const [rateRaw, boundsRaw] = await Promise.all([
+  const [rateRaw, boundsRaw, poolRaw, owedRaw] = await Promise.all([
     call(staking, `${SEL.rewardRateOf}${encodeAddr(owner)}`).catch(() => null),
-    call(staking, SEL.lockBounds).catch(() => null)
+    call(staking, SEL.lockBounds).catch(() => null),
+    call(staking, SEL.rewardTokenBalance).catch(() => null),
+    call(staking, `${SEL.owedRewards}${encodeAddr(owner)}`).catch(() => null)
   ]);
 
   walletRatePerSecond = rateRaw ? decodeUintAt(rateRaw, 0) : 0n;
+
+  // A failed pool read leaves the previous value in place rather than
+  // substituting 0n, which would fake a shortfall the chain never reported.
+  if (poolRaw && poolRaw !== '0x') rewardPoolBalance = decodeUintAt(poolRaw, 0);
+  owedRewards = owedRaw && owedRaw !== '0x' ? decodeUintAt(owedRaw, 0) : 0n;
 
   // The contract is authoritative for the lock window; the defaults are only a
   // fallback for when the read fails.
@@ -969,21 +997,69 @@ function applyStakeCardState(tokenId, stake, now) {
   }
 }
 
+/*
+ * Caps an accrued figure at what the reward pool can actually pay.
+ *
+ * claim() settles against rewardToken.balanceOf(stakingContract) and reverts
+ * with InsufficientRewardPool when it falls short, so anything above the pool
+ * balance is accrued-but-unpayable, not claimable. A pool that has not been
+ * read yet (null) is not treated as a limit.
+ */
+function payableNow(amount) {
+  if (rewardPoolBalance === null) return amount;
+  return amount > rewardPoolBalance ? rewardPoolBalance : amount;
+}
+
+// Renders the pool readout and returns whether the pool is short of `claimable`.
+function renderRewardPool(claimable) {
+  const known = rewardPoolBalance !== null;
+  setText('rewardPoolValue', known
+    ? `${formatUnits(rewardPoolBalance, TOKEN_DECIMALS, 2)} ROBINPUMP`
+    : '—');
+
+  const short = known && claimable > rewardPoolBalance;
+  const el = $('rewardPoolNotice');
+  if (el) {
+    el.hidden = !short;
+    el.textContent = short
+      ? `The reward pool holds ${formatUnits(rewardPoolBalance, TOKEN_DECIMALS, 2)} ROBINPUMP, less than your accrued ${formatUnits(claimable, TOKEN_DECIMALS, 2)}. Claims are limited to the pool balance until it is topped up. Your accrual keeps running and nothing is lost.`
+      : '';
+  }
+  return short;
+}
+
+// Renders the owedRewards credit + its withdraw control.
+function renderOwedRewards() {
+  const has = owedRewards > 0n;
+  toggle('owedRewardsRow', has);
+  setText('owedRewardsValue', `${formatUnits(owedRewards, TOKEN_DECIMALS, 4)} ROBINPUMP`);
+  const btn = $('claimOwedBtn');
+  if (btn) {
+    btn.disabled = !has;
+    btn.setAttribute('aria-disabled', String(!has));
+  }
+}
+
 function tickLiveValues() {
   const now = chainNow();
   let total = 0n;
-  let claimable = 0n;
+  let accruedClaimable = 0n;
   let unlockedCount = 0;
   let soonestClaim = 0;
 
   stakeIndex.forEach((stake, tokenId) => {
     const pending = localPending(stake, now);
     total += pending;
-    if (now >= stake.nextClaimAt) claimable += pending;
+    if (now >= stake.nextClaimAt) accruedClaimable += pending;
     else if (!soonestClaim || stake.nextClaimAt < soonestClaim) soonestClaim = stake.nextClaimAt;
     if (now >= stake.unlockAt) unlockedCount++;
     applyStakeCardState(tokenId, stake, now);
   });
+
+  // What the pool can actually pay right now — never advertise more than this.
+  const claimable = payableNow(accruedClaimable);
+  const poolShort = renderRewardPool(accruedClaimable);
+  renderOwedRewards();
 
   const staked = stakeIndex.size;
   toggle('stakeSummary', staked > 0);
@@ -1006,11 +1082,13 @@ function tickLiveValues() {
     claimAllBtn.setAttribute('aria-disabled', String(!ready));
   }
   setText('claimAllAmount', `${formatUnits(claimable, TOKEN_DECIMALS, 4)} ROBINPUMP`);
-  setText('claimAllHint', claimable > 0n
-    ? 'Each NFT can be claimed once every 24 hours. NFTs still cooling down are skipped.'
-    : soonestClaim
-      ? `Next claim unlocks in ${formatCountdown(soonestClaim - now)}.`
-      : 'Each NFT can be claimed once every 24 hours.');
+  setText('claimAllHint', poolShort
+    ? 'Reward pool is being topped up — claims are capped at the pool balance. Your accrual continues.'
+    : claimable > 0n
+      ? 'Each NFT can be claimed once every 24 hours. NFTs still cooling down are skipped.'
+      : soonestClaim
+        ? `Next claim unlocks in ${formatCountdown(soonestClaim - now)}.`
+        : 'Each NFT can be claimed once every 24 hours.');
 }
 
 function stopTicker() {
@@ -1262,7 +1340,12 @@ function resetState() {
   stopTicker();
   stakeIndex = new Map();
   walletRatePerSecond = 0n;
+  // Back to "not read yet" — not 0n, which would render as an empty pool.
+  rewardPoolBalance = null;
+  owedRewards = 0n;
   hide('stakeSummary');
+  hide('owedRewardsRow');
+  hide('rewardPoolNotice');
   setView('connect');
   renderWalletChip();
   ['statYourNfts', 'statStaked', 'statDaily', 'statPending', 'statBalance'].forEach(id => setText(id, '—'));
@@ -1273,6 +1356,51 @@ function resetState() {
 }
 
 // ── Error messages ─────────────────────────────────────────────────────────────
+/*
+ * Custom-error decoding.
+ *
+ * The contract reverts with custom errors, which reach the browser as 4-byte
+ * selectors buried in provider-specific error shapes. Matching on the selector
+ * is the only reliable route: the surrounding message text differs per wallet.
+ * Selectors are derived at runtime from the canonical signatures, so they
+ * cannot drift from the deployed ABI the way hard-coded hex would.
+ */
+const REVERT_MESSAGES = Object.freeze([
+  ['InsufficientRewardPool(uint256,uint256)',
+   'The reward pool is short right now. Nothing is lost — your rewards keep accruing on-chain. Claim again once the pool is topped up, or claim a single NFT instead of all of them.'],
+  ['TierNotConfigured(uint256)',
+   'This NFT has no rarity tier set on-chain yet, so it cannot be staked. Rarity configuration is still in progress.'],
+  ['RewardRateNotSet(uint8)',
+   'The reward rate for this rarity tier is not set on-chain yet.'],
+  ['StakeLocked(uint256,uint256)',
+   'This NFT is still inside its lock period. There is no early withdrawal — wait for the unlock time.'],
+  ['ClaimCooldownActive(uint256,uint256)',
+   'This NFT was already claimed within the last 24 hours. Wait for the cooldown to finish.'],
+  ['NothingOwed()',
+   'There is no deferred reward credit on this address to withdraw.'],
+  ['AlreadyStaked(uint256)',      'This NFT is already staked.'],
+  ['NotStaked(uint256)',          'This NFT is not staked.'],
+  ['NotStaker(uint256,address)',  'This NFT was staked by a different address.'],
+  ['NotTokenOwner(uint256,address)', 'Your wallet does not own this NFT.'],
+  ['InvalidLockDuration(uint256,uint256,uint256)',
+   'That lock duration is outside the allowed 7-day to 1095-day window.'],
+  ['BatchTooLarge(uint256,uint256)',
+   'Too many NFTs in one transaction — the contract caps a batch at 50.'],
+  ['RarityAlreadyLocked()',       'The rarity mapping is permanently locked and cannot be changed.'],
+  ['DirectNftTransferNotAllowed()',
+   'NFTs cannot be sent to the staking contract directly — use the Stake button.']
+].map(([signature, message]) => [selector(signature), message]));
+
+// Pulls the revert selector out of whatever shape the provider produced.
+function revertSelectorOf(err) {
+  const data = err?.data?.originalError?.data ?? err?.data?.data ?? err?.data ?? err?.error?.data;
+  const hex = typeof data === 'string' ? data : '';
+  if (/^0x[0-9a-fA-F]{8}/.test(hex)) return hex.slice(0, 10).toLowerCase();
+  // Fallback: some wallets only embed the revert payload inside the message.
+  const found = String(err?.message || '').match(/0x[0-9a-fA-F]{8,}/);
+  return found ? found[0].slice(0, 10).toLowerCase() : null;
+}
+
 function friendlyError(err) {
   if (!err) return 'Unknown error.';
   const msg = err?.message || String(err);
@@ -1280,6 +1408,13 @@ function friendlyError(err) {
   if (msg.includes('insufficient funds')) return 'Insufficient ETH for gas fees.';
   if (msg.includes('nonce')) return 'Nonce mismatch — reset your wallet pending transactions.';
   if (msg.includes('No EVM wallet')) return msg;
+
+  const sel = revertSelectorOf(err);
+  if (sel) {
+    const hit = REVERT_MESSAGES.find(([s]) => s === sel);
+    if (hit) return hit[1];
+  }
+
   if (msg.length > 160) return `${msg.slice(0, 160)}…`;
   return msg;
 }
@@ -1428,6 +1563,24 @@ async function handleUnstake(tokenId) {
   });
 }
 
+/*
+ * Pre-flight against the reward pool.
+ *
+ * claim()/claimBatch() revert with InsufficientRewardPool when the settled
+ * amount exceeds the pool, so a doomed claim is stopped here rather than
+ * costing the user gas on a guaranteed revert. Only a shortfall the chain
+ * actually reported blocks the click — an unread pool (null) never does.
+ */
+function poolCanCover(amount, { label = 'claim' } = {}) {
+  if (DEMO_MODE || rewardPoolBalance === null) return true;
+  if (amount <= rewardPoolBalance) return true;
+  toast('info', 'Reward pool is being topped up.',
+    rewardPoolBalance === 0n
+      ? `The pool is empty, so this ${label} would fail on-chain. Your rewards keep accruing — nothing is lost.`
+      : `The pool holds ${formatUnits(rewardPoolBalance, TOKEN_DECIMALS, 2)} ROBINPUMP, less than the ${formatUnits(amount, TOKEN_DECIMALS, 2)} this ${label} would settle. Try a single NFT, or wait for the next top-up.`);
+  return false;
+}
+
 async function handleClaim(tokenId) {
   const stake = stakeIndex.get(String(tokenId));
   if (stake && !isClaimable(stake)) {
@@ -1435,6 +1588,7 @@ async function handleClaim(tokenId) {
       `#${tokenId} can be claimed again ${formatTimestamp(stake.nextClaimAt)} (once every 24 hours).`);
     return;
   }
+  if (stake && !poolCanCover(localPending(stake))) return;
   if (DEMO_MODE) { await demoClaim(tokenId); return; }
   await runTx({
     label: 'Claim',
@@ -1462,6 +1616,10 @@ async function handleClaimAll() {
 
   const batch = ready.slice(0, MAX_BATCH_SIZE);
   const remaining = ready.length - batch.length;
+  // claimBatch() settles every id in one transaction, so the pool must cover
+  // the whole batch or the entire call reverts.
+  const batchTotal = batch.reduce((sum, id) => sum + localPending(stakeIndex.get(id), now), 0n);
+  if (!poolCanCover(batchTotal, { label: 'claim-all' })) return;
   await runTx({
     label: 'Claim all',
     to: CFG.stakingContract,
@@ -1471,6 +1629,34 @@ async function handleClaimAll() {
       + (remaining ? ` ${remaining} more are ready — run Claim all again.` : '')
       + ' NFTs still cooling down were skipped.',
     buildData: async () => `${SEL.claimBatch}${encodeUintArray(batch)}`
+  });
+}
+
+/*
+ * Withdraws the deferred-reward credit.
+ *
+ * unstake() always returns the NFT, but when the pool was short at settlement
+ * time it books the reward as owedRewards[staker] instead of transferring it.
+ * claimOwed() is the only way to collect that credit, so it must be reachable
+ * from the UI or the balance is stranded on-chain.
+ */
+async function handleClaimOwed() {
+  if (DEMO_MODE) {
+    toast('info', 'Preview mode.', 'Deferred rewards are not simulated in the preview.');
+    return;
+  }
+  if (owedRewards === 0n) {
+    toast('info', 'Nothing owed.', 'This address has no deferred reward credit to withdraw.');
+    return;
+  }
+  if (!poolCanCover(owedRewards, { label: 'withdrawal' })) return;
+  await runTx({
+    label: 'Withdraw owed rewards',
+    to: CFG.stakingContract,
+    pendingText: 'Withdrawal submitted.',
+    successTitle: 'Deferred rewards withdrawn.',
+    successBody: `${formatUnits(owedRewards, TOKEN_DECIMALS, 4)} ROBINPUMP was sent to your wallet.`,
+    buildData: async () => SEL.claimOwed
   });
 }
 
@@ -1853,6 +2039,8 @@ $('switchNetworkBtn')?.addEventListener('click', async () => {
 $('refreshBtn')?.addEventListener('click', () => refreshState());
 
 $('claimAllBtn')?.addEventListener('click', () => handleClaimAll());
+
+$('claimOwedBtn')?.addEventListener('click', () => handleClaimOwed());
 
 // ── Lock modal controls ────────────────────────────────────────────────────────
 $('lockPresets')?.addEventListener('click', e => {

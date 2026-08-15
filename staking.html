@@ -264,7 +264,34 @@
               <dt>Locked / unlocked</dt>
               <dd id="summaryLockValue">—</dd>
             </div>
+            <div>
+              <!--
+                The live reward pool: rewardToken.balanceOf(stakingContract).
+                Claims are paid from this balance, so it is shown alongside the
+                claimable figure rather than hidden.
+              -->
+              <dt>Reward pool</dt>
+              <dd id="rewardPoolValue">—</dd>
+            </div>
           </dl>
+
+          <!-- Shown only when the pool cannot cover the accrued claimable amount. -->
+          <p class="pool-notice" id="rewardPoolNotice" role="status" hidden></p>
+
+          <!--
+            owedRewards credit: booked by unstake() when the pool was short at
+            settlement time, withdrawn separately through claimOwed().
+          -->
+          <div class="owed-row" id="owedRewardsRow" hidden>
+            <div>
+              <span class="owed-label">Deferred rewards owed to you</span>
+              <strong class="owed-amount" id="owedRewardsValue">0 ROBINPUMP</strong>
+              <span class="owed-hint">Booked when you unstaked while the pool was short. Withdraw it any time the pool has funds.</span>
+            </div>
+            <button type="button" class="btn btn-secondary" id="claimOwedBtn" disabled aria-disabled="true">
+              Withdraw Owed
+            </button>
+          </div>
         </div>
 
         <div class="nft-grid" id="nftGridStaked" aria-label="Staked NFTs" aria-live="polite"></div>
