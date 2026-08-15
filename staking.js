@@ -1275,7 +1275,7 @@ async function refreshState() {
     } else if (!tokenIds.length) {
       setStatus('No Green Flock NFTs found in this wallet.');
     } else if (!STAKING_ACTIVE) {
-      setStatus(`${tokenIds.length} Green Flock NFT${tokenIds.length !== 1 ? 's' : ''} found. Staking opens once the contract is deployed and funded.`);
+      setStatus(`${tokenIds.length} Green Flock NFT${tokenIds.length !== 1 ? 's' : ''} found. Staking opens once the on-chain rarity tiers and the $ROBINPUMP reward vault are in place.`);
     } else {
       setStatus('');
     }
@@ -1422,7 +1422,9 @@ function friendlyError(err) {
 // ── Staking actions (disabled until contract deployed) ─────────────────────────
 function requireStakingActive() {
   if (STAKING_ACTIVE) return true;
-  toast('info', 'Staking is not live yet.', 'The audited contract is not deployed. Wallet discovery works in the meantime.');
+  // The contract itself is deployed; what is still missing is the on-chain rarity
+  // table and the reward vault balance. Saying "not deployed" here would be wrong.
+  toast('info', 'Staking is not live yet.', 'Rarity tiers are not written on-chain yet and the reward vault is unfunded. Wallet discovery works in the meantime.');
   return false;
 }
 
@@ -2128,12 +2130,23 @@ if (DEMO_MODE) {
 }
 
 // ── Staking status banner ──────────────────────────────────────────────────────
+// The copy below has to stay truthful about three separate facts: the contract is
+// deployed, the rarity tiers are not written on-chain yet, and the reward vault is
+// still empty. Both the headline and the detail line are script-driven so the
+// wording never drifts from the actual gate state.
 if (DEMO_MODE) {
   show('demoBanner');
   show('stakingNotice');
   setText('stakingStatusText', 'Preview mode — synthetic data, no chain access.');
+  setText('stakingStatusDetail', 'Numbers on this page are generated locally for layout review. No wallet is read and no transaction can be sent.');
 } else if (STAKING_ACTIVE) {
   hide('stakingNotice');
 } else {
-  setText('stakingStatusText', 'Green Flock staking is preparing for launch.');
+  setText('stakingStatusText', 'Green Flock staking contract is live on Robinhood Chain.');
+  setText(
+    'stakingStatusDetail',
+    'Wallet discovery is open now, and the rarity table for all 3,333 Green Flock NFTs is finalised. '
+      + 'Two on-chain steps remain before staking, reward claims, and unstaking are switched on: '
+      + 'writing the rarity tiers to the contract, and depositing the $ROBINPUMP reward vault.'
+  );
 }
